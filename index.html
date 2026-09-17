@@ -137,7 +137,409 @@
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 14px;">
                 <span>Total Bonus Referral:</span>
+                <span id=<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Free Mining Crypto</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script> <!-- Script Adsgram -->
+    <style>
+        :root {
+            --bg: #121212; --card: #1e1e1e; --primary: #00e676; --orange: #ff9100;
+            --text: #ffffff; --sub: #aaaaaa; --nav-bg: #1a1a1a;
+        }
+        body { 
+            font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); 
+            margin: 0; padding: 0; padding-bottom: 70px; display: flex; flex-direction: column; align-items: center;
+        }
+        .page { display: none; width: 100%; max-width: 400px; padding: 15px; box-sizing: border-box; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .coin { font-size: 50px; margin: 10px 0; filter: drop-shadow(0 0 10px rgba(0, 230, 118, 0.4)); text-align: center; }
+        .balance { font-size: 26px; font-weight: bold; color: var(--primary); text-align: center; margin-bottom: 10px; }
+        
+        .xp-container { width: 100%; background: #333; border-radius: 10px; height: 18px; position: relative; overflow: hidden; margin-bottom: 15px; }
+        .xp-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.5s; }
+        .xp-text { position: absolute; width: 100%; text-align: center; font-size: 11px; font-weight: bold; color: #000; top: 2px; }
+        
+        .btn { background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+        .btn:active { transform: scale(0.97); }
+        .btn-boost { background: var(--orange); color: white; }
+        .btn-boost:disabled { background: #555; color: #888; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        
+        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #333; }
+        .task-item:last-child { border-bottom: none; }
+        .task-info { display: flex; flex-direction: column; }
+        .task-name { font-weight: bold; font-size: 14px; }
+        .task-reward { font-size: 12px; color: var(--primary); }
+        .task-status { font-size: 12px; color: var(--sub); margin-top: 4px; }
+        
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub); cursor: pointer; font-size: 10px; flex: 1; }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+        
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; margin-bottom: 10px; }
+        .wd-item { background: #252525; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; }
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .status-paid { color: var(--primary); font-weight: bold; }
+        .ref-box { background: #222; border: 1px dashed var(--primary); padding: 10px; border-radius: 8px; word-break: break-all; font-size: 12px; margin-bottom: 10px; color: #ccc; }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE: HOME -->
+    <div id="page-home" class="page active">
+        <div class="card">
+            <div style="font-size: 12px; color: var(--sub); text-align: center;" id="userDisplay">Memuat user...</div>
+            <div class="title" style="text-align: center;">⛏️ Free Mining Crypto</div>
+            <div class="coin">🪙</div>
+            <div class="balance" id="balanceDisplay">0 Koin</div>
+            <div class="xp-container">
+                <div class="xp-bar" id="xpBar"></div>
+                <div class="xp-text" id="xpText">Lv. 1 (0/100 XP)</div>
+            </div>
+            <button class="btn" onclick="mineCoin()">Mulai Mining</button>
+            <button class="btn btn-boost" id="boostBtn" onclick="boostMining()">⚡ Boost x2 (Tonton Iklan)</button>
+        </div>
+    </div>
+
+    <!-- PAGE: TASKS -->
+    <div id="page-tasks" class="page">
+        <div class="card">
+            <div class="title">📋 Daftar Tugas</div>
+            <div style="font-size: 12px; color: var(--sub); margin-bottom: 15px;">Reset otomatis setiap 24 jam.</div>
+            <div class="task-item">
+                <div class="task-info">
+                    <span class="task-name">Join Grup Telegram</span>
+                    <span class="task-reward">+500 Koin</span>
+                </div>
+                <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin: 0;" id="btn-task-tg" onclick="doTask('tg')">Klaim</button>
+            </div>
+            <div class="task-item">
+                <div class="task-info">
+                    <span class="task-name">Tonton Iklan (20x)</span>
+                    <span class="task-reward">+1000 Koin</span>
+                </div>
+                <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin: 0;" id="btn-task-ads" onclick="doTask('ads')">Kerjakan (0/20)</button>
+            </div>
+            <div class="task-status" id="resetTimer" style="margin-top: 15px; text-align: center;">Task di-reset dalam: --:--:--</div>
+        </div>
+    </div>
+
+    <!-- PAGE: WALLET -->
+    <div id="page-wallet" class="page">
+        <div class="card">
+            <div class="title">💳 Dompet & Withdraw</div>
+            <div style="font-size: 14px; margin-bottom: 15px;">Saldo: <span id="walletBalance" style="color: var(--primary); font-weight: bold;">0</span> Koin</div>
+            <input type="email" id="faucetEmail" placeholder="Masukkan Email FaucetPay">
+            <input type="number" id="wdAmount" placeholder="Jumlah Koin (Min. 5000)">
+            <button class="btn" onclick="requestWithdraw()">Tarik ke FaucetPay</button>
+        </div>
+        <div class="card">
+            <div class="title">📜 Histori Penarikan</div>
+            <div id="wdHistory">Belum ada penarikan.</div>
+        </div>
+    </div>
+
+    <!-- PAGE: REFERRAL -->
+    <div id="page-referral" class="page">
+        <div class="card">
+            <div class="title">👥 Undang Teman</div>
+            <div style="font-size: 13px; color: var(--sub); margin-bottom: 15px; text-align: center;">
+                Ajak temanmu bergabung dan dapatkan <b>+1000 Koin</b> untuk setiap teman yang bergabung!
+            </div>
+            <div class="ref-box" id="refLinkDisplay">Memuat link...</div>
+            <button class="btn" onclick="copyRefLink()">📋 Salin Link Referral</button>
+            <button class="btn btn-outline" onclick="shareRefLink()">📤 Bagikan ke Teman</button>
+        </div>
+        <div class="card">
+            <div class="title">📊 Statistik Referral</div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
+                <span>Total Teman Diundang:</span>
+                <span id="refCount" style="font-weight: bold; color: var(--primary);">0 Orang</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                <span>Total Bonus Referral:</span>
                 <span id="refEarnings" style="font-weight: bold; color: var(--primary);">0 Koin</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: PROFILE -->
+    <div id="page-profile" class="page">
+        <div class="card">
+            <div class="title">👤 Profil Akun</div>
+            <div style="font-size: 14px; margin-bottom: 5px;">Username: <span id="profileUsername" style="color: var(--primary);">-</span></div>
+            <div style="font-size: 14px; margin-bottom: 5px;">Total Koin: <span id="profileBalance" style="color: var(--primary);">0</span></div>
+            <div style="font-size: 14px; margin-bottom: 15px;">Level Saat Ini: <span id="profileLevel" style="color: var(--primary);">1</span></div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <div class="nav-icon">⛏️</div><div>Home</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('tasks', this)">
+            <div class="nav-icon">📋</div><div>Tasks</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('wallet', this)">
+            <div class="nav-icon">💳</div><div>Wallet</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('referral', this)">
+            <div class="nav-icon">👥</div><div>Referral</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('profile', this)">
+            <div class="nav-icon">👤</div><div>Profil</div>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURASI GAME ---
+        const MIN_WD = 5000;
+        const MAX_ADS_DAILY = 20;
+        const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 Jam
+        const REF_BONUS = 1000;
+
+        // --- STATE & LOCAL STORAGE ---
+        let state = JSON.parse(localStorage.getItem('miningAppState')) || {
+            balance: 0, xp: 0, level: 1,
+            tasksCompleted: { tg: false, adsCount: 0 },
+            lastReset: Date.now(),
+            withdrawals: [],
+            boostEndTime: 0,
+            refCount: 0,
+            refEarnings: 0,
+            referredBy: null
+        };
+
+        function saveState() { localStorage.setItem('miningAppState', JSON.stringify(state)); }
+
+        // --- INISIALISASI UI & USER ---
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        const user = tg.initDataUnsafe?.user;
+        const userId = user ? user.id : 'unknown';
+        const username = user ? `@${user.username || user.first_name}` : 'Penambang Anonim';
+        
+        document.getElementById('userDisplay').innerText = `Halo, ${username}`;
+        document.getElementById('profileUsername').innerText = username;
+
+        // --- INISIALISASI ADSGRAM (BLOCK ID SUDAH DIPASANG) ---
+        const AdController = window.Adsgram.init({ blockId: "48424" });
+
+        // --- SISTEM REFERRAL (SIMULASI FRONTEND) ---
+        const BOT_LINK = "https://t.me/Free_MiningCrypto_bot";
+        const refLink = `${BOT_LINK}?start=ref_${userId}`;
+        document.getElementById('refLinkDisplay').innerText = refLink;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const startParam = urlParams.get('start') || tg.initDataUnsafe?.start_param;
+        
+        if (startParam && startParam.startsWith('ref_') && !state.referredBy) {
+            const referrerId = startParam.replace('ref_', '');
+            if (referrerId !== userId) {
+                state.balance += 500;
+                state.refEarnings += REF_BONUS;
+                state.refCount += 1;
+                state.referredBy = referrerId;
+                saveState();
+                tg.showAlert(`🎉 Selamat datang! Kamu bergabung melalui link referral dan mendapat bonus 500 Koin!`);
+            }
+        }
+
+        function copyRefLink() {
+            navigator.clipboard.writeText(refLink).then(() => {
+                tg.showAlert('✅ Link referral berhasil disalin! Bagikan ke temanmu.');
+                tg.HapticFeedback.notificationOccurred('success');
+            }).catch(() => {
+                tg.showAlert('Gagal menyalin. Silakan salin manual: ' + refLink);
+            });
+        }
+
+        function shareRefLink() {
+            const shareText = `Ayo tambang koin crypto gratis di Free Mining Crypto! Klik link ini untuk mulai: ${refLink}`;
+            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
+        }
+
+        // --- UPDATE UI ---
+        function updateUI() {
+            let isBoosted = Date.now() < state.boostEndTime;
+            const boostBtn = document.getElementById('boostBtn');
+            if(isBoosted) {
+                boostBtn.disabled = true;
+                boostBtn.innerText = 'Boost Aktif!';
+            } else {
+                boostBtn.disabled = false;
+                boostBtn.innerText = '⚡ Boost x2 (Tonton Iklan)';
+            }
+
+            document.getElementById('balanceDisplay').innerText = state.balance.toLocaleString() + ' Koin';
+            document.getElementById('walletBalance').innerText = state.balance.toLocaleString();
+            document.getElementById('profileBalance').innerText = state.balance.toLocaleString();
+            document.getElementById('profileLevel').innerText = state.level;
+            document.getElementById('refCount').innerText = state.refCount + ' Orang';
+            document.getElementById('refEarnings').innerText = state.refEarnings.toLocaleString() + ' Koin';
+            
+            let maxXp = state.level * 100;
+            if (state.xp >= maxXp) {
+                state.xp -= maxXp;
+                state.level++;
+                tg.showAlert(`🎉 Selamat! Kamu naik ke Level ${state.level}!`);
+            }
+            document.getElementById('xpBar').style.width = (state.xp / maxXp * 100) + '%';
+            document.getElementById('xpText').innerText = `Lv. ${state.level} (${state.xp}/${maxXp} XP)`;
+
+            document.getElementById('btn-task-tg').innerText = state.tasksCompleted.tg ? 'Selesai' : 'Klaim';
+            document.getElementById('btn-task-tg').disabled = state.tasksCompleted.tg;
+            document.getElementById('btn-task-ads').innerText = `Kerjakan (${state.tasksCompleted.adsCount}/${MAX_ADS_DAILY})`;
+            document.getElementById('btn-task-ads').disabled = state.tasksCompleted.adsCount >= MAX_ADS_DAILY;
+
+            renderWithdrawals();
+            saveState();
+        }
+
+        // --- NAVIGASI TAB ---
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // --- AKSI GAME ---
+        function mineCoin() {
+            let isBoosted = Date.now() < state.boostEndTime;
+            let reward = isBoosted ? 20 : 10;
+            state.balance += reward;
+            state.xp += 5;
+            updateUI();
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function boostMining() {
+            const btn = document.getElementById('boostBtn');
+            btn.disabled = true;
+            btn.innerText = 'Memuat Iklan...';
+
+            // --- ADSGRAM INTEGRATION (BOOST) ---
+            AdController.show().then((result) => {
+                if (result.done) {
+                    state.boostEndTime = Date.now() + 60000; // Boost 1 menit
+                    tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert('⚡ Boost Aktif! Dapatkan 2x koin selama 1 menit.');
+                    updateUI();
+                }
+            }).catch((result) => {
+                btn.disabled = false;
+                btn.innerText = '⚡ Boost x2 (Tonton Iklan)';
+                tg.showAlert('Iklan belum selesai ditonton!');
+            });
+        }
+
+        function doTask(taskId) {
+            if (taskId === 'tg') {
+                state.tasksCompleted.tg = true;
+                state.balance += 500;
+                state.xp += 20;
+                tg.showAlert('Terima kasih telah bergabung! +500 Koin.');
+                updateUI();
+            } else if (taskId === 'ads') {
+                if (state.tasksCompleted.adsCount >= MAX_ADS_DAILY) return;
+                
+                // --- ADSGRAM INTEGRATION (TASK ADS) ---
+                AdController.show().then((result) => {
+                    if (result.done) {
+                        state.tasksCompleted.adsCount++;
+                        state.balance += 50;
+                        state.xp += 10;
+                        tg.showAlert('Iklan selesai ditonton! +50 Koin.');
+                        updateUI();
+                    }
+                }).catch((result) => {
+                    tg.showAlert('Iklan belum selesai ditonton!');
+                });
+            }
+        }
+
+        // --- SISTEM WITHDRAW ---
+        function requestWithdraw() {
+            const email = document.getElementById('faucetEmail').value;
+            const amount = parseInt(document.getElementById('wdAmount').value);
+
+            if (!email || !email.includes('@')) return tg.showAlert('Masukkan email FaucetPay yang valid!');
+            if (!amount || amount < MIN_WD) return tg.showAlert(`Minimal penarikan adalah ${MIN_WD} Koin!`);
+            if (amount > state.balance) return tg.showAlert('Saldo kamu tidak cukup!');
+
+            state.balance -= amount;
+            const wdId = 'WD' + Date.now();
+            state.withdrawals.unshift({
+                id: wdId, email: email, amount: amount, status: 'Pending', time: Date.now()
+            });
+
+            tg.showAlert(`✅ Permintaan penarikan ${amount} Koin ke ${email} berhasil dikirim! Status: Pending.`);
+            document.getElementById('faucetEmail').value = '';
+            document.getElementById('wdAmount').value = '';
+            updateUI();
+        }
+
+        function renderWithdrawals() {
+            const container = document.getElementById('wdHistory');
+            if (state.withdrawals.length === 0) {
+                container.innerHTML = 'Belum ada penarikan.';
+                return;
+            }
+            container.innerHTML = '';
+            state.withdrawals.forEach(wd => {
+                // SIMULASI: Ubah status menjadi Paid setelah 1 menit
+                if (wd.status === 'Pending' && Date.now() - wd.time > 60000) {
+                    wd.status = 'Paid';
+                }
+                const statusClass = wd.status === 'Pending' ? 'status-pending' : 'status-paid';
+                container.innerHTML += `
+                    <div class="wd-item">
+                        <div>
+                            <div style="font-weight: bold;">${wd.amount} Koin</div>
+                            <div style="font-size: 11px; color: #aaa;">${wd.email}</div>
+                        </div>
+                        <div class="${statusClass}" style="text-align: right;">
+                            ${wd.status}<br>
+                            <span style="font-size: 10px; color: #666;">${new Date(wd.time).toLocaleTimeString()}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- SISTEM RESET TASK 24 JAM & TIMER ---
+        setInterval(() => {
+            if (Date.now() - state.lastReset > RESET_INTERVAL) {
+                state.tasksCompleted.tg = false;
+                state.tasksCompleted.adsCount = 0;
+                state.lastReset = Date.now();
+                tg.showAlert('🔄 Tugas harian telah di-reset! Silakan kerjakan lagi.');
+                updateUI();
+            }
+            const timeLeft = RESET_INTERVAL - (Date.now() - state.lastReset);
+            const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+            const seconds = Math.floor((timeLeft / 1000) % 60);
+            document.getElementById('resetTimer').innerText = `Task di-reset dalam: ${hours}j ${minutes}m ${seconds}s`;
+            
+            renderWithdrawals();
+            saveState();
+        }, 1000);
+
+        updateUI();2
+    </script>
+</body>
+</html>refEarnings" style="font-weight: bold; color: var(--primary);">0 Koin</span>
             </div>
         </div>
     </div>
