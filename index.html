@@ -8,49 +8,112 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
         :root {
-            --bg: #0b0b14; --card: #151529; --primary: #00e676; --purple: #7b2cbf; 
-            --blue: #00b4d8; --orange: #ff9100; --text: #ffffff; --sub: #8d8daa; 
-            --nav-bg: #151529; --gradient: linear-gradient(135deg, #7b2cbf, #00b4d8);
+            --bg: #08080f; --card: #14142b; --primary: #00e676; --purple: #7b2cbf;
+            --blue: #00b4d8; --cyan: #00f5d4; --orange: #ff9100; --text: #fff;
+            --sub: #8d8daa; --nav-bg: #0f0f1e;
+            --gradient: linear-gradient(135deg, #7b2cbf, #00b4d8);
+            --gradient-green: linear-gradient(135deg, #00e676, #00b4d8);
+            --shadow-glow: 0 0 20px rgba(123, 44, 191, 0.5);
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 80px; display: flex; flex-direction: column; align-items: center; }
-        .page { display: none; width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; animation: fadeIn 0.3s; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: radial-gradient(circle at top, #1a0a2e 0%, #08080f 60%);
+            background-attachment: fixed; color: var(--text);
+            margin: 0; padding: 0; padding-bottom: 90px; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
+        }
+        .page { display: none; width: 100%; max-width: 430px; padding: 15px; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card { background: linear-gradient(145deg, #1a1a30, #151529); border: 1px solid #2a2a45; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-        .card-glow { background: linear-gradient(135deg, #2a1a4a, #1a2a4a); border: 1px solid #7b2cbf; }
-        .title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #fff; }
-        .subtitle { font-size: 12px; color: var(--sub); margin-bottom: 15px; }
-        .coin { font-size: 55px; margin: 10px 0; text-align: center; filter: drop-shadow(0 0 15px rgba(123, 44, 191, 0.6)); }
-        .balance { font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 5px; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .xp-container { width: 100%; background: #2a2a45; border-radius: 10px; height: 22px; position: relative; overflow: hidden; margin-bottom: 15px; }
-        .xp-bar { height: 100%; background: var(--gradient); width: 0%; transition: width 0.5s; }
-        .xp-text { position: absolute; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: #fff; top: 3px; text-shadow: 0 1px 2px #000; }
-        .btn { background: var(--gradient); color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(123, 44, 191, 0.5), inset 0 0 20px rgba(123, 44, 191, 0.3); }
+            50% { box-shadow: 0 0 45px rgba(0, 230, 118, 0.8), inset 0 0 30px rgba(0, 230, 118, 0.4); }
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .card {
+            background: linear-gradient(145deg, #1a1a35, #14142b);
+            border: 1px solid #2a2a45; border-radius: 22px; padding: 20px;
+            margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden;
+        }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(123,44,191,0.8), transparent); }
+        .card-glow { background: linear-gradient(135deg, #2a1a4a 0%, #1a2a4a 100%); border: 1px solid rgba(123, 44, 191, 0.6); box-shadow: var(--shadow-glow); }
+        .title { font-size: 19px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.5px; }
+        .subtitle { font-size: 12px; color: var(--sub); margin-bottom: 15px; line-height: 1.5; }
+        .coin { font-size: 60px; margin: 15px 0; text-align: center; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.7)); animation: float 3s ease-in-out infinite; }
+        .balance { font-size: 34px; font-weight: 900; text-align: center; margin-bottom: 8px; background: var(--gradient-green); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
+        .xp-container { width: 100%; background: #2a2a45; border-radius: 12px; height: 24px; position: relative; overflow: hidden; margin-bottom: 18px; border: 1px solid #3a3a55; }
+        .xp-bar { height: 100%; background: var(--gradient); width: 0%; transition: width 0.5s ease; }
+        .xp-text { position: absolute; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: #fff; top: 4px; text-shadow: 0 1px 3px #000; }
+        .btn { background: var(--gradient); color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 800; width: 100%; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; box-shadow: 0 6px 20px rgba(123, 44, 191, 0.4); letter-spacing: 0.5px; }
         .btn:active { transform: scale(0.97); }
-        .btn-boost { background: linear-gradient(135deg, #ff9100, #ff5400); box-shadow: 0 4px 15px rgba(255, 145, 0, 0.4); }
-        .btn-boost:disabled { background: #2a2a45; color: #555; box-shadow: none; }
+        .btn:disabled { background: #2a2a45 !important; color: #555 !important; box-shadow: none; cursor: not-allowed; }
+        .btn-boost { background: linear-gradient(135deg, #ff9100, #ff5400); box-shadow: 0 6px 20px rgba(255, 145, 0, 0.4); }
         .btn-outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); box-shadow: none; }
-        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #2a2a45; }
+        .btn-mining { background: var(--gradient-green); box-shadow: 0 6px 25px rgba(0, 230, 118, 0.5); font-size: 16px; }
+        .btn-mining.active { background: linear-gradient(135deg, #ff5400, #ff3d3d); box-shadow: 0 6px 25px rgba(255, 84, 0, 0.5); }
+        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #2a2a45; }
         .task-item:last-child { border-bottom: none; }
-        .task-info { display: flex; flex-direction: column; }
-        .task-name { font-weight: bold; font-size: 14px; }
-        .task-reward { font-size: 12px; color: var(--primary); }
-        .task-status { font-size: 12px; color: var(--sub); margin-top: 4px; }
-        .progress-bar { width: 100%; background: #2a2a45; border-radius: 5px; height: 8px; margin-top: 5px; }
-        .progress-fill { height: 100%; background: var(--blue); border-radius: 5px; width: 0%; }
-        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2a2a45; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub); cursor: pointer; font-size: 10px; flex: 1; }
-        .nav-item.active { color: var(--blue); }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
-        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #2a2a45; background: #0b0b14; color: white; box-sizing: border-box; margin-bottom: 12px; }
-        .wd-item { background: #1a1a30; padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; border: 1px solid #2a2a45; }
-        .status-pending { color: #ffc107; font-weight: bold; }
-        .status-paid { color: var(--primary); font-weight: bold; }
-        .ref-box { background: #0b0b14; border: 1px dashed var(--blue); padding: 12px; border-radius: 12px; word-break: break-all; font-size: 12px; margin-bottom: 12px; color: #ccc; }
-        .timer-box { text-align: center; font-size: 14px; color: var(--orange); font-weight: bold; margin-bottom: 10px; }
+        .task-info { display: flex; flex-direction: column; flex: 1; }
+        .task-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+        .task-reward { font-size: 12px; color: var(--primary); font-weight: 600; }
+        .task-status { font-size: 11px; color: var(--sub); margin-top: 5px; }
+        .progress-bar { width: 100%; background: #2a2a45; border-radius: 6px; height: 8px; margin-top: 8px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--gradient-green); border-radius: 6px; width: 0%; transition: width 0.5s ease; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(15, 15, 30, 0.98); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 10px 0 12px 0; border-top: 1px solid rgba(123, 44, 191, 0.3); z-index: 100; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub); cursor: pointer; font-size: 9px; flex: 1; transition: 0.2s; padding: 4px 0; }
+        .nav-item.active { color: var(--cyan); }
+        .nav-item.active .nav-icon { transform: scale(1.15); filter: drop-shadow(0 0 8px var(--cyan)); }
+        .nav-icon { font-size: 22px; margin-bottom: 3px; transition: 0.2s; }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #2a2a45; background: #0a0a15; color: white; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--purple); box-shadow: 0 0 15px rgba(123, 44, 191, 0.4); }
+        .wd-item { background: #1a1a35; padding: 14px; border-radius: 14px; margin-bottom: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #2a2a45; }
+        .status-pending { color: #ffc107; font-weight: bold; font-size: 12px; }
+        .status-paid { color: var(--primary); font-weight: bold; font-size: 12px; }
+        .ref-box { background: #0a0a15; border: 1px dashed var(--blue); padding: 14px; border-radius: 12px; word-break: break-all; font-size: 11px; margin-bottom: 12px; color: #ccc; font-family: monospace; }
+        .timer-box { text-align: center; font-size: 14px; color: var(--orange); font-weight: 800; margin-bottom: 10px; letter-spacing: 1px; }
+        .rig-orb { width: 190px; height: 190px; margin: 20px auto; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle, #2a1a4a 0%, #151529 65%); border: 3px dashed rgba(123, 44, 191, 0.6); position: relative; transition: 0.5s; }
+        .rig-orb::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 2px dashed rgba(0, 180, 216, 0.4); animation: rotate 20s linear infinite; }
+        .rig-orb.active { animation: pulseGlow 2.5s infinite; border-color: var(--primary); }
+        .rig-icon { font-size: 42px; margin-bottom: 6px; filter: drop-shadow(0 0 10px var(--purple)); }
+        .rig-power { font-size: 22px; font-weight: 900; color: var(--cyan); letter-spacing: 1px; }
+        .rig-status { font-size: 10px; color: var(--sub); margin-top: 5px; letter-spacing: 1.5px; }
+        .accumulator { text-align: center; margin: 20px 0; padding: 18px; background: rgba(0, 230, 118, 0.05); border-radius: 16px; border: 1px solid rgba(0, 230, 118, 0.2); }
+        .accumulator-value { font-size: 36px; font-weight: 900; color: var(--primary); letter-spacing: -1px; text-shadow: 0 0 20px rgba(0, 230, 118, 0.5); }
+        .accumulator-label { font-size: 11px; color: var(--sub); letter-spacing: 2px; margin-bottom: 6px; }
+        .rig-upgrade-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-radius: 14px; margin-bottom: 10px; background: linear-gradient(145deg, #1a1a35, #14142b); border: 1px solid #2a2a45; transition: 0.3s; }
+        .rig-upgrade-item.owned { border-color: var(--primary); background: linear-gradient(145deg, rgba(0,230,118,0.15), rgba(0,180,216,0.05)); }
+        .rig-upgrade-item.locked { opacity: 0.4; }
+        .rig-upgrade-name { font-size: 14px; font-weight: 800; margin-bottom: 3px; }
+        .rig-upgrade-power { font-size: 12px; color: var(--cyan); font-weight: 600; }
+        .rig-upgrade-cost { font-size: 12px; color: var(--orange); font-weight: 700; margin-bottom: 5px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+        .modal-overlay.show { display: flex; animation: fadeIn 0.3s; }
+        .modal-box { background: linear-gradient(145deg, #1a1a35, #0a0a15); border: 2px solid var(--purple); border-radius: 24px; padding: 28px 22px; max-width: 350px; width: 100%; text-align: center; box-shadow: 0 25px 70px rgba(123, 44, 191, 0.6); }
+        .modal-icon { font-size: 55px; margin-bottom: 10px; animation: float 2s infinite; }
+        .modal-title { font-size: 20px; font-weight: 900; margin-bottom: 8px; color: var(--primary); letter-spacing: 1px; }
+        .modal-stat { display: flex; justify-content: space-between; font-size: 13px; margin: 10px 0; padding: 12px 14px; background: #0a0a15; border-radius: 10px; border: 1px solid #2a2a45; }
+        .modal-stat span:last-child { color: var(--cyan); font-weight: 800; }
     </style>
 </head>
 <body>
+
+    <!-- MODAL OFFLINE EARNINGS -->
+    <div class="modal-overlay" id="offlineModal">
+        <div class="modal-box">
+            <div class="modal-icon">⚡</div>
+            <div class="modal-title">RIG MAINTAINED POWER</div>
+            <div class="subtitle" style="text-align:center;">Rig kamu terus bekerja saat kamu pergi!</div>
+            <div class="modal-stat"><span>⏱️ Waktu Offline</span><span id="offlineTime">0 jam</span></div>
+            <div class="modal-stat"><span>📡 Avg Hashrate</span><span id="offlineHash">1 GH/s</span></div>
+            <div class="modal-stat"><span>🔋 Efficiency</span><span>100%</span></div>
+            <div class="modal-stat"><span>💰 Pendapatan</span><span id="offlineEarn">0 Koin</span></div>
+            <button class="btn" onclick="claimOfflineMining()" style="margin-top:15px;">KLAIM PENDAPATAN</button>
+        </div>
+    </div>
 
     <!-- PAGE: HOME -->
     <div id="page-home" class="page active">
@@ -59,11 +122,9 @@
             <div class="title" style="text-align: center; font-size: 20px;">⛏️ Free Mining Crypto</div>
             <div class="coin">🪙</div>
             <div class="balance" id="balanceDisplay">0 Koin</div>
-            <div class="xp-container">
-                <div class="xp-bar" id="xpBar"></div>
-                <div class="xp-text" id="xpText">Lv. 1 (0/100 XP)</div>
-            </div>
-            <button class="btn" onclick="mineCoin()">Mulai Mining</button>
+            <div style="font-size: 11px; color: var(--sub); text-align: center; letter-spacing: 3px; margin-bottom: 15px;">SALDO TOTAL</div>
+            <div class="xp-container"><div class="xp-bar" id="xpBar"></div><div class="xp-text" id="xpText">Lv. 1 (0/100 XP)</div></div>
+            <button class="btn" onclick="mineCoin()">⛏️ Mulai Mining Manual</button>
             <button class="btn btn-boost" id="boostBtn" onclick="boostMining()">⚡ Boost x2 (Tonton Iklan)</button>
             <div class="timer-box" id="boostTimer" style="display:none;">Boost aktif: 60s</div>
         </div>
@@ -71,15 +132,32 @@
 
     <!-- PAGE: MINE -->
     <div id="page-mine" class="page">
-        <div class="card">
-            <div class="title">⚙️ Rig Mining Otomatis</div>
-            <div class="subtitle">Penambangan tetap berjalan saat aplikasi ditutup.</div>
-            <div style="text-align: center; margin: 20px 0;">
-                <div style="font-size: 40px;">⚡</div>
-                <div style="font-size: 24px; font-weight: bold; color: var(--blue);" id="offlineYield">0</div>
-                <div style="font-size: 12px; color: var(--sub);">Koin Terkumpul (Offline)</div>
+        <div class="card card-glow">
+            <div class="title">⚙️ RIG MINING STATION</div>
+            <div class="subtitle" id="rigName">Starter Rig - Level 1</div>
+            <div class="rig-orb" id="rigOrb">
+                <div class="rig-icon">🔋</div>
+                <div class="rig-power" id="rigPower">1 GH/s</div>
+                <div class="rig-status">EFFICIENCY 100%</div>
             </div>
-            <button class="btn" onclick="collectOfflineYield()">Klaim Hasil Mining</button>
+            <div class="accumulator">
+                <div class="accumulator-label">MINED REWARD ACCUMULATOR</div>
+                <div class="accumulator-value" id="accumulatedRewards">0.00000000</div>
+                <div style="font-size: 11px; color: var(--sub);">Koin terkumpul (real-time)</div>
+            </div>
+            <button class="btn btn-mining" id="btnMining" onclick="toggleMining()">⚡ START MINING 24 JAM ⚡</button>
+            <div class="timer-box" id="miningTimer" style="display:none;">Mining aktif: 24:00:00</div>
+            <button class="btn btn-outline" onclick="claimAccumulated()">💰 KLAIM HASIL MINING</button>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); margin-top: 10px; padding: 0 5px;">
+                <span>Rate/Jam: <span id="hourlyRate" style="color: var(--cyan); font-weight: bold;">0.0000</span></span>
+                <span>Total Power: <span id="totalPower" style="color: var(--cyan); font-weight: bold;">1 GH/s</span></span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="title">🔧 Upgrade RIG</div>
+            <div class="subtitle">Beli RIG yang lebih kuat untuk menambah GH/s.</div>
+            <div id="rigUpgradeList"></div>
         </div>
     </div>
 
@@ -89,22 +167,16 @@
             <div class="title">📋 Misi Harian</div>
             <div class="subtitle">Reset otomatis setiap 24 jam.</div>
             <div class="task-item">
-                <div class="task-info">
-                    <span class="task-name">Join Grup Telegram</span>
-                    <span class="task-reward">+500 Koin</span>
-                </div>
+                <div class="task-info"><span class="task-name">Join Grup Telegram</span><span class="task-reward">+500 Koin</span></div>
                 <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin: 0;" id="btn-task-tg" onclick="doTask('tg')">Klaim</button>
             </div>
             <div class="task-item">
                 <div class="task-info" style="width: 100%;">
-                    <div style="display: flex; justify-content: space-between;">
-                        <span class="task-name">Tonton Iklan (20x)</span>
-                        <span class="task-reward">+1000 Koin</span>
-                    </div>
-                    <div class="progress-bar"><div class="progress-fill" id="adsProgressBar" style="width: 0%;"></div></div>
+                    <div style="display: flex; justify-content: space-between;"><span class="task-name">Tonton Iklan (20x)</span><span class="task-reward">+1000 Koin</span></div>
+                    <div class="progress-bar"><div class="progress-fill" id="adsProgressBar"></div></div>
                     <span class="task-status" id="adsProgressText">0/20 Selesai</span>
                 </div>
-                <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin: 0; margin-left: 10px;" id="btn-task-ads" onclick="doTask('ads')">Tonton</button>
+                <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin: 0 0 0 10px;" id="btn-task-ads" onclick="doTask('ads')">Tonton</button>
             </div>
             <div class="task-status" id="resetTimer" style="margin-top: 15px; text-align: center;">Task di-reset dalam: --:--:--</div>
         </div>
@@ -120,10 +192,7 @@
             <input type="number" id="wdAmount" placeholder="Jumlah Koin (Min. 5000)">
             <button class="btn" id="btnWd" onclick="requestWithdraw()" disabled>Tarik ke FaucetPay</button>
         </div>
-        <div class="card">
-            <div class="title">📜 Histori Penarikan</div>
-            <div id="wdHistory">Belum ada penarikan.</div>
-        </div>
+        <div class="card"><div class="title">📜 Histori Penarikan</div><div id="wdHistory">Belum ada penarikan.</div></div>
     </div>
 
     <!-- PAGE: REFERRAL -->
@@ -137,14 +206,8 @@
         </div>
         <div class="card">
             <div class="title">📊 Statistik Referral</div>
-            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
-                <span>Total Teman Diundang:</span>
-                <span id="refCount" style="font-weight: bold; color: var(--primary);">0 Orang</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                <span>Total Bonus Referral:</span>
-                <span id="refEarnings" style="font-weight: bold; color: var(--primary);">0 Koin</span>
-            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;"><span>Total Teman Diundang:</span><span id="refCount" style="font-weight: bold; color: var(--primary);">0 Orang</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px;"><span>Total Bonus Referral:</span><span id="refEarnings" style="font-weight: bold; color: var(--primary);">0 Koin</span></div>
         </div>
     </div>
 
@@ -158,7 +221,7 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
+    <!-- BOTTOM NAV -->
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('home', this)"><div class="nav-icon">⛏️</div><div>Home</div></div>
         <div class="nav-item" onclick="switchTab('mine', this)"><div class="nav-icon">⚙️</div><div>Mine</div></div>
@@ -166,264 +229,351 @@
         <div class="nav-item" onclick="switchTab('wallet', this)"><div class="nav-icon">💳</div><div>Wallet</div></div>
         <div class="nav-item" onclick="switchTab('referral', this)"><div class="nav-icon">👥</div><div>Referral</div></div>
         <div class="nav-item" onclick="switchTab('profile', this)"><div class="nav-icon">👤</div><div>Profil</div></div>
-                                                                                      </div>
-    <script>
-    // --- KONFIGURASI GAME ---
+    </div>
+<script>
+    // ============ KONFIGURASI GAME ============
     const MIN_WD = 5000;
     const MAX_ADS_DAILY = 20;
-    const RESET_INTERVAL = 24 * 60 * 60 * 1000; 
+    const RESET_INTERVAL = 24 * 60 * 60 * 1000;
     const REF_BONUS = 1000;
-    const OFFLINE_RATE = 50; 
+    const MINING_RATE = 0.000032; // koin per detik per GH/s
+    const MINING_DURATION = 24 * 60 * 60 * 1000; // 24 jam
+    const RIG_TIERS = [
+        { name: "Starter Rig", gh: 1, cost: 0 },
+        { name: "Copper Frame", gh: 5, cost: 1500 },
+        { name: "Ion Core", gh: 15, cost: 5000 },
+        { name: "Plasma Drive", gh: 40, cost: 15000 },
+        { name: "Quantum Chip", gh: 100, cost: 50000 },
+        { name: "Fusion Reactor", gh: 250, cost: 150000 },
+        { name: "Dark Matter Core", gh: 600, cost: 500000 },
+        { name: "Singularity Engine", gh: 1500, cost: 1500000 }
+    ];
 
+    // ============ STATE MANAGEMENT ============
     let state = JSON.parse(localStorage.getItem('miningAppState')) || {
         balance: 0, xp: 0, level: 1,
         tasksCompleted: { tg: false, adsCount: 0 },
-        lastReset: Date.now(),
-        withdrawals: [],
-        boostEndTime: 0,
-        refCount: 0,
-        refEarnings: 0,
-        referredBy: null,
-        lastSeen: Date.now() 
+        lastReset: Date.now(), withdrawals: [], boostEndTime: 0,
+        refCount: 0, refEarnings: 0, referredBy: null,
+        lastSeen: Date.now(),
+        rigLevel: 0, miningPower: 1,
+        accumulatedRewards: 0,
+        miningEndTime: 0,
+        lastMiningTick: 0
     };
+    // Migrasi state lama
+    if (state.rigLevel === undefined) state.rigLevel = 0;
+    if (state.miningPower === undefined) state.miningPower = 1;
+    if (state.accumulatedRewards === undefined) state.accumulatedRewards = 0;
+    if (state.miningEndTime === undefined) state.miningEndTime = 0;
+    if (state.lastMiningTick === undefined) state.lastMiningTick = 0;
 
     function saveState() { localStorage.setItem('miningAppState', JSON.stringify(state)); }
 
+    // ============ TELEGRAM INIT ============
     const tg = window.Telegram.WebApp;
     tg.expand();
     const user = tg.initDataUnsafe?.user;
     const userId = user ? user.id : 'unknown';
-    const username = user ? `@${user.username || user.first_name}` : 'Penambang Anonim';
-    
+    const username = user ? `@${user.username || user.first_name}` : 'Penambang';
     document.getElementById('userDisplay').innerText = `Halo, ${username}`;
     document.getElementById('profileUsername').innerText = username;
 
+    // ============ ADSGRAM INIT ============
     const AdController = window.Adsgram.init({ blockId: "48424" });
 
+    // ============ SISTEM REFERRAL ============
     const BOT_LINK = "https://t.me/Free_MiningCrypto_bot";
     const refLink = `${BOT_LINK}?start=ref_${userId}`;
     document.getElementById('refLinkDisplay').innerText = refLink;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const startParam = urlParams.get('start') || tg.initDataUnsafe?.start_param;
-    
+    const startParam = new URLSearchParams(window.location.search).get('start') || tg.initDataUnsafe?.start_param;
     if (startParam && startParam.startsWith('ref_') && !state.referredBy) {
-        const referrerId = startParam.replace('ref_', '');
-        if (referrerId !== userId) {
-            state.balance += 500;
-            state.refEarnings += REF_BONUS;
-            state.refCount += 1;
-            state.referredBy = referrerId;
+        const refId = startParam.replace('ref_', '');
+        if (refId !== userId) {
+            state.balance += 500; state.refEarnings += REF_BONUS;
+            state.refCount += 1; state.referredBy = refId;
             saveState();
-            tg.showAlert(`🎉 Selamat datang! Kamu bergabung melalui link referral dan mendapat bonus 500 Koin!`);
+            tg.showAlert(`🎉 Selamat datang! Kamu dapat bonus 500 Koin dari referral!`);
         }
     }
 
     function copyRefLink() {
         navigator.clipboard.writeText(refLink).then(() => {
-            tg.showAlert('✅ Link referral berhasil disalin!');
+            tg.showAlert('✅ Link disalin!');
             tg.HapticFeedback.notificationOccurred('success');
-        }).catch(() => {
-            tg.showAlert('Gagal menyalin. Silakan salin manual: ' + refLink);
-        });
+        }).catch(() => tg.showAlert('Gagal menyalin.'));
     }
-
     function shareRefLink() {
-        const shareText = `Ayo tambang koin crypto gratis! Klik link ini: ${refLink}`;
-        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
+        const t = `Ayo tambang koin gratis di Free Mining Crypto! Klik: ${refLink}`;
+        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(t)}`);
     }
+// ============ MINING LOGIC ============
+function calculateReward(seconds) {
+    const rate = state.miningPower * MINING_RATE;
+    const rand = 0.8 + Math.random() * 0.4; // variasi 0.8x - 1.2x
+    return seconds * rate * rand;
+}
 
-    function calculateOfflineYield() {
-        const now = Date.now();
-        const timeDiff = now - state.lastSeen;
-        const hoursOffline = timeDiff / (1000 * 60 * 60);
-        const yieldAmount = Math.floor(hoursOffline * OFFLINE_RATE);
-        
-        if (yieldAmount > 0) {
-            document.getElementById('offlineYield').innerText = yieldAmount.toLocaleString();
-        } else {
-            document.getElementById('offlineYield').innerText = "0";
-        }
-        return yieldAmount;
-    }
+function isMiningActive() { return Date.now() < state.miningEndTime; }
 
-    function collectOfflineYield() {
-        const yieldAmount = calculateOfflineYield();
-        if (yieldAmount > 0) {
-            state.balance += yieldAmount;
-            state.lastSeen = Date.now();
-            saveState();
-            tg.showAlert(`✅ Berhasil mengklaim ${yieldAmount} Koin!`);
-            updateUI();
-        } else {
-            tg.showAlert('Belum ada hasil mining yang bisa diklaim.');
-        }
-    }
-
-    function updateUI() {
-        let isBoosted = Date.now() < state.boostEndTime;
-        const boostBtn = document.getElementById('boostBtn');
-        const boostTimer = document.getElementById('boostTimer');
-        
-        if(isBoosted) {
-            boostBtn.disabled = true;
-            boostBtn.innerText = 'Boost Sedang Berjalan...';
-            boostTimer.style.display = 'block';
-            const timeLeft = Math.ceil((state.boostEndTime - Date.now()) / 1000);
-            boostTimer.innerText = `Boost aktif: ${timeLeft}s`;
-        } else {
-            boostBtn.disabled = false;
-            boostBtn.innerText = '⚡ Boost x2 (Tonton Iklan)';
-            boostTimer.style.display = 'none';
-        }
-
-        document.getElementById('balanceDisplay').innerText = state.balance.toLocaleString() + ' Koin';
-        document.getElementById('walletBalance').innerText = state.balance.toLocaleString();
-        document.getElementById('profileBalance').innerText = state.balance.toLocaleString();
-        document.getElementById('profileLevel').innerText = state.level;
-        document.getElementById('refCount').innerText = state.refCount + ' Orang';
-        document.getElementById('refEarnings').innerText = state.refEarnings.toLocaleString() + ' Koin';
-        
-        let maxXp = state.level * 100;
-        if (state.xp >= maxXp) {
-            state.xp -= maxXp;
-            state.level++;
-            tg.showAlert(`🎉 Selamat! Kamu naik ke Level ${state.level}!`);
-        }
-        document.getElementById('xpBar').style.width = (state.xp / maxXp * 100) + '%';
-        document.getElementById('xpText').innerText = `Lv. ${state.level} (${state.xp}/${maxXp} XP)`;
-
-        document.getElementById('btn-task-tg').innerText = state.tasksCompleted.tg ? 'Selesai' : 'Klaim';
-        document.getElementById('btn-task-tg').disabled = state.tasksCompleted.tg;
-        
-        const adsCount = state.tasksCompleted.adsCount;
-        const adsPercent = (adsCount / MAX_ADS_DAILY) * 100;
-        document.getElementById('adsProgressBar').style.width = adsPercent + '%';
-        document.getElementById('adsProgressText').innerText = `${adsCount}/${MAX_ADS_DAILY} Selesai`;
-        document.getElementById('btn-task-ads').disabled = adsCount >= MAX_ADS_DAILY;
-
-        const wdBtn = document.getElementById('btnWd');
-        const wdReq = document.getElementById('wdRequirement');
-        if (adsCount >= MAX_ADS_DAILY) {
-            wdBtn.disabled = false;
-            wdReq.style.display = 'none';
-        } else {
-            wdBtn.disabled = true;
-            wdReq.style.display = 'block';
-        }
-
-        calculateOfflineYield();
-        renderWithdrawals();
+function toggleMining() {
+    if (isMiningActive()) {
+        updateMiningProgress();
+        state.miningEndTime = 0;
         saveState();
+        tg.showAlert('⏹️ Mining dihentikan. Hasil tetap tersimpan!');
+    } else {
+        state.miningEndTime = Date.now() + MINING_DURATION;
+        state.lastMiningTick = Date.now();
+        saveState();
+        tg.showAlert('⚡ Mining dimulai! Rig akan bekerja selama 24 jam.');
+        tg.HapticFeedback.notificationOccurred('success');
     }
-            function switchTab(tabId, element) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + tabId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            element.classList.add('active');
-            state.lastSeen = Date.now();
-            saveState();
-        }
+    updateMiningUI();
+}
 
-        function mineCoin() {
-            let isBoosted = Date.now() < state.boostEndTime;
-            let reward = isBoosted ? 20 : 10;
-            state.balance += reward;
-            state.xp += 5;
-            state.lastSeen = Date.now();
+function updateMiningProgress() {
+    if (!isMiningActive() || state.lastMiningTick === 0) return;
+    const now = Date.now();
+    const endTick = Math.min(now, state.miningEndTime);
+    const elapsedSec = (endTick - state.lastMiningTick) / 1000;
+    if (elapsedSec > 0) {
+        state.accumulatedRewards += calculateReward(elapsedSec);
+        state.lastMiningTick = endTick;
+    }
+}
+
+function claimAccumulated() {
+    updateMiningProgress();
+    if (state.accumulatedRewards <= 0) { tg.showAlert('Belum ada hasil mining.'); return; }
+    const claimed = Math.floor(state.accumulatedRewards);
+    if (claimed <= 0) { tg.showAlert('Hasil terlalu kecil. Tunggu lagi.'); return; }
+    state.balance += claimed;
+    state.accumulatedRewards -= claimed;
+    saveState();
+    tg.showAlert(`✅ Berhasil klaim ${claimed.toLocaleString()} Koin!`);
+    tg.HapticFeedback.notificationOccurred('success');
+    updateUI();
+}
+
+// ============ OFFLINE MINING ============
+function checkOfflineEarnings() {
+    const now = Date.now();
+    const lastSeen = state.lastSeen || now;
+    const offlineMs = now - lastSeen;
+    const offlineHours = offlineMs / (1000 * 60 * 60);
+    const offlineSec = offlineMs / 1000;
+    const earned = calculateReward(offlineSec);
+    if (offlineSec > 60 && earned > 0.001) {
+        document.getElementById('offlineTime').innerText = offlineHours.toFixed(2) + ' jam';
+        document.getElementById('offlineHash').innerText = state.miningPower + ' GH/s';
+        document.getElementById('offlineEarn').innerText = earned.toFixed(6) + ' Koin';
+        document.getElementById('offlineModal').classList.add('show');
+        state._pendingOfflineEarn = earned;
+    }
+}
+
+function claimOfflineMining() {
+    const earned = state._pendingOfflineEarn || 0;
+    state.balance += earned;
+    state.accumulatedRewards = 0;
+    state.lastMiningTick = Date.now();
+    state.lastSeen = Date.now();
+    delete state._pendingOfflineEarn;
+    saveState();
+    document.getElementById('offlineModal').classList.remove('show');
+    tg.showAlert(`✅ +${earned.toFixed(4)} Koin dari mining offline!`);
+    updateUI();
+}
+
+// ============ RIG UPGRADE ============
+function renderRigUpgrades() {
+    const container = document.getElementById('rigUpgradeList');
+    container.innerHTML = '';
+    RIG_TIERS.forEach((rig, i) => {
+        const owned = i <= state.rigLevel;
+        const canBuy = i === state.rigLevel + 1 && state.balance >= rig.cost;
+        const el = document.createElement('div');
+        el.className = 'rig-upgrade-item' + (owned ? ' owned' : '') + (i > state.rigLevel + 1 ? ' locked' : '');
+        el.innerHTML = `
+            <div>
+                <div class="rig-upgrade-name">${rig.name} ${owned ? '✅' : ''}</div>
+                <div class="rig-upgrade-power">⚡ ${rig.gh} GH/s</div>
+            </div>
+            <div style="text-align: right;">
+                ${owned ? '<span style="color: var(--primary); font-size: 12px;">AKTIF</span>' :
+                `<div class="rig-upgrade-cost">💰 ${rig.cost.toLocaleString()} Koin</div>
+                <button class="btn btn-outline" style="width: auto; padding: 6px 12px; margin: 5px 0 0 0; font-size: 12px;"
+                onclick="upgradeRig(${i})" ${canBuy ? '' : 'disabled style="opacity:0.5;"'}>BELI</button>`}
+            </div>
+        `;
+        container.appendChild(el);
+    });
+}
+
+function upgradeRig(index) {
+    const rig = RIG_TIERS[index];
+    if (index !== state.rigLevel + 1) return tg.showAlert('Beli RIG secara berurutan!');
+    if (state.balance < rig.cost) return tg.showAlert('Saldo tidak cukup!');
+    state.balance -= rig.cost;
+    state.rigLevel = index;
+    state.miningPower = rig.gh;
+    saveState();
+    tg.showAlert(`🎉 Upgrade ke ${rig.name}! Power: ${rig.gh} GH/s`);
+    tg.HapticFeedback.notificationOccurred('success');
+    updateUI();
+}
+// ============ UI UPDATE ============
+function updateMiningUI() {
+    const active = isMiningActive();
+    const btn = document.getElementById('btnMining');
+    const timer = document.getElementById('miningTimer');
+    const orb = document.getElementById('rigOrb');
+    if (active) {
+        btn.innerText = '⏹️ HENTIKAN MINING';
+        btn.classList.add('active');
+        timer.style.display = 'block';
+        orb.classList.add('active');
+        const remain = state.miningEndTime - Date.now();
+        const h = Math.floor(remain / 3600000);
+        const m = Math.floor((remain % 3600000) / 60000);
+        const s = Math.floor((remain % 60000) / 1000);
+        timer.innerText = `Mining aktif: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    } else {
+        btn.innerText = '⚡ START MINING 24 JAM ⚡';
+        btn.classList.remove('active');
+        timer.style.display = 'none';
+        orb.classList.remove('active');
+    }
+    document.getElementById('rigName').innerText = `${RIG_TIERS[state.rigLevel].name} - Level ${state.rigLevel + 1}`;
+    document.getElementById('rigPower').innerText = `${state.miningPower} GH/s`;
+    document.getElementById('totalPower').innerText = `${state.miningPower} GH/s`;
+    document.getElementById('hourlyRate').innerText = (state.miningPower * MINING_RATE * 3600).toFixed(4);
+    document.getElementById('accumulatedRewards').innerText = state.accumulatedRewards.toFixed(8);
+}
+
+function updateUI() {
+    const isBoosted = Date.now() < state.boostEndTime;
+    const boostBtn = document.getElementById('boostBtn');
+    const boostTimer = document.getElementById('boostTimer');
+    if (isBoosted) {
+        boostBtn.disabled = true; boostBtn.innerText = 'Boost Sedang Berjalan...';
+        boostTimer.style.display = 'block';
+        boostTimer.innerText = `Boost aktif: ${Math.ceil((state.boostEndTime - Date.now()) / 1000)}s`;
+    } else {
+        boostBtn.disabled = false; boostBtn.innerText = '⚡ Boost x2 (Tonton Iklan)';
+        boostTimer.style.display = 'none';
+    }
+    document.getElementById('balanceDisplay').innerText = Math.floor(state.balance).toLocaleString() + ' Koin';
+    document.getElementById('walletBalance').innerText = Math.floor(state.balance).toLocaleString();
+    document.getElementById('profileBalance').innerText = Math.floor(state.balance).toLocaleString();
+    document.getElementById('profileLevel').innerText = state.level;
+    document.getElementById('refCount').innerText = state.refCount + ' Orang';
+    document.getElementById('refEarnings').innerText = state.refEarnings.toLocaleString() + ' Koin';
+    let maxXp = state.level * 100;
+    if (state.xp >= maxXp) { state.xp -= maxXp; state.level++; tg.showAlert(`🎉 Naik ke Level ${state.level}!`); }
+    document.getElementById('xpBar').style.width = (state.xp / maxXp * 100) + '%';
+    document.getElementById('xpText').innerText = `Lv. ${state.level} (${state.xp}/${maxXp} XP)`;
+    document.getElementById('btn-task-tg').innerText = state.tasksCompleted.tg ? 'Selesai' : 'Klaim';
+    document.getElementById('btn-task-tg').disabled = state.tasksCompleted.tg;
+    const adsCount = state.tasksCompleted.adsCount;
+    document.getElementById('adsProgressBar').style.width = (adsCount / MAX_ADS_DAILY * 100) + '%';
+    document.getElementById('adsProgressText').innerText = `${adsCount}/${MAX_ADS_DAILY} Selesai`;
+    document.getElementById('btn-task-ads').disabled = adsCount >= MAX_ADS_DAILY;
+    const wdBtn = document.getElementById('btnWd');
+    const wdReq = document.getElementById('wdRequirement');
+    if (adsCount >= MAX_ADS_DAILY) { wdBtn.disabled = false; wdReq.style.display = 'none'; }
+    else { wdBtn.disabled = true; wdReq.style.display = 'block'; }
+    updateMiningUI();
+    renderRigUpgrades();
+    renderWithdrawals();
+    saveState();
+}
+
+// ============ NAVIGASI ============
+function switchTab(tabId, element) {
+    updateMiningProgress();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + tabId).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    element.classList.add('active');
+    state.lastSeen = Date.now();
+    saveState();
+}
+
+// ============ AKSI GAME ============
+function mineCoin() {
+    const isBoosted = Date.now() < state.boostEndTime;
+    const reward = isBoosted ? 20 : 10;
+    state.balance += reward; state.xp += 5;
+    updateUI();
+    tg.HapticFeedback.impactOccurred('medium');
+}
+
+function boostMining() {
+    const btn = document.getElementById('boostBtn');
+    btn.disabled = true; btn.innerText = 'Memuat Iklan...';
+    AdController.show().then((r) => {
+        if (r.done) {
+            state.boostEndTime = Date.now() + 60000;
+            tg.HapticFeedback.notificationOccurred('success');
+            tg.showAlert('⚡ Boost Aktif! 2x koin selama 1 menit.');
             updateUI();
-            tg.HapticFeedback.impactOccurred('medium');
         }
+    }).catch(() => {
+        btn.disabled = false; btn.innerText = '⚡ Boost x2 (Tonton Iklan)';
+        tg.showAlert('Iklan belum selesai ditonton!');
+    });
+}
 
-        function boostMining() {
-            const btn = document.getElementById('boostBtn');
-            btn.disabled = true;
-            btn.innerText = 'Memuat Iklan...';
-
-            AdController.show().then((result) => {
-                if (result.done) {
-                    state.boostEndTime = Date.now() + 60000; 
-                    tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert('⚡ Boost Aktif! 2x koin selama 1 menit.');
-                    updateUI();
-                }
-            }).catch((result) => {
-                btn.disabled = false;
-                btn.innerText = '⚡ Boost x2 (Tonton Iklan)';
-                tg.showAlert('Iklan belum selesai ditonton!');
-            });
-        }
-
-        function doTask(taskId) {
-            if (taskId === 'tg') {
-                state.tasksCompleted.tg = true;
-                state.balance += 500;
-                state.xp += 20;
-                tg.showAlert('Terima kasih telah bergabung! +500 Koin.');
-                updateUI();
-            } else if (taskId === 'ads') {
-                if (state.tasksCompleted.adsCount >= MAX_ADS_DAILY) return;
-                
-                AdController.show().then((result) => {
-                    if (result.done) {
-                        state.tasksCompleted.adsCount++;
-                        state.balance += 50;
-                        state.xp += 10;
-                        tg.showAlert('Iklan selesai! +50 Koin.');
-                        updateUI();
-                    }
-                }).catch((result) => {
-                    tg.showAlert('Iklan belum selesai ditonton!');
-                });
+function doTask(taskId) {
+    if (taskId === 'tg') {
+        state.tasksCompleted.tg = true;
+        state.balance += 500; state.xp += 20;
+        tg.showAlert('Terima kasih! +500 Koin.'); updateUI();
+    } else if (taskId === 'ads') {
+        if (state.tasksCompleted.adsCount >= MAX_ADS_DAILY) return;
+        AdController.show().then((r) => {
+            if (r.done) {
+                state.tasksCompleted.adsCount++;
+                state.balance += 50; state.xp += 10;
+                tg.showAlert('Iklan selesai! +50 Koin.'); updateUI();
             }
-        }
+        }).catch(() => tg.showAlert('Iklan belum selesai ditonton!'));
+    }
+}
 
-        function requestWithdraw() {
-            const email = document.getElementById('faucetEmail').value;
-            const amount = parseInt(document.getElementById('wdAmount').value);
+// ============ WITHDRAW ============
+function requestWithdraw() {
+    const email = document.getElementById('faucetEmail').value;
+    const amount = parseInt(document.getElementById('wdAmount').value);
+    if (!email || !email.includes('@')) return tg.showAlert('Email FaucetPay tidak valid!');
+    if (!amount || amount < MIN_WD) return tg.showAlert(`Minimal penarikan ${MIN_WD} Koin!`);
+    if (amount > state.balance) return tg.showAlert('Saldo tidak cukup!');
+    state.balance -= amount;
+    state.withdrawals.unshift({ id: 'WD' + Date.now(), email, amount, status: 'Pending', time: Date.now() });
+    tg.showAlert(`✅ Penarikan ${amount} Koin ke ${email}! Status: Pending.`);
+    document.getElementById('faucetEmail').value = '';
+    document.getElementById('wdAmount').value = '';
+    updateUI();
+}
 
-            if (!email || !email.includes('@')) return tg.showAlert('Masukkan email FaucetPay yang valid!');
-            if (!amount || amount < MIN_WD) return tg.showAlert(`Minimal penarikan adalah ${MIN_WD} Koin!`);
-            if (amount > state.balance) return tg.showAlert('Saldo kamu tidak cukup!');
-
-            state.balance -= amount;
-            const wdId = 'WD' + Date.now();
-            state.withdrawals.unshift({ id: wdId, email: email, amount: amount, status: 'Pending', time: Date.now() });
-
-            tg.showAlert(`✅ Penarikan ${amount} Koin ke ${email} berhasil! Status: Pending.`);
-            document.getElementById('faucetEmail').value = '';
-            document.getElementById('wdAmount').value = '';
-            updateUI();
-        }
-
-        function renderWithdrawals() {
-            const container = document.getElementById('wdHistory');
-            if (state.withdrawals.length === 0) {
-                container.innerHTML = 'Belum ada penarikan.';
-                return;
-            }
-            container.innerHTML = '';
-            state.withdrawals.forEach(wd => {
-                if (wd.status === 'Pending' && Date.now() - wd.time > 60000) {
-                    wd.status = 'Paid';
-                }
-                const statusClass = wd.status === 'Pending' ? 'status-pending' : 'status-paid';
-                container.innerHTML += `
-                    <div class="wd-item">
-                        <div>
-                            <div style="font-weight: bold;">${wd.amount} Koin</div>
-                            <div style="font-size: 11px; color: #aaa;">${wd.email}</div>
-                        </div>
-                        <div class="${statusClass}" style="text-align: right;">
-                            ${wd.status}<br>
-                            <span style="font-size: 10px; color: #666;">${new Date(wd.time).toLocaleTimeString()}</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
+function renderWithdrawals() {
+    const c = document.getElementById('wdHistory');
+    if (state.withdrawals.length === 0) { c.innerHTML = 'Belum ada penarikan.'; return; }
+    c.innerHTML = '';
+    state.withdrawals.forEach(wd => {
+        if (wd.status === 'Pending' && Date.now() - wd.time > 60000) wd.status = 'Paid';
+        const cls = wd.status === 'Pending' ? 'status-pending' : 'status-paid';
+        c.innerHTML += `<div class="wd-item"><div><div style="font-weight:bold;">${wd.amount} Koin</div><div style="font-size:11px;color:#aaa;">${wd.email}</div></div><div class="${cls}" style="text-align:right;">${wd.status}<br><span style="font-size:10px;color:#666;">${new Date(wd.time).toLocaleTimeString()}</span></div></div>`;
+    });
+}
+// ============ MAIN LOOP (setiap detik) ============
         setInterval(() => {
+            if (isMiningActive()) {
+                updateMiningProgress();
+                updateMiningUI();
+            }
             if (Date.now() - state.lastReset > RESET_INTERVAL) {
                 state.tasksCompleted.tg = false;
                 state.tasksCompleted.adsCount = 0;
@@ -432,22 +582,21 @@
                 updateUI();
             }
             const timeLeft = RESET_INTERVAL - (Date.now() - state.lastReset);
-            const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-            const seconds = Math.floor((timeLeft / 1000) % 60);
-            document.getElementById('resetTimer').innerText = `Task di-reset dalam: ${hours}j ${minutes}m ${seconds}s`;
-            
+            const h = Math.floor((timeLeft / 3600000) % 24);
+            const m = Math.floor((timeLeft / 60000) % 60);
+            const s = Math.floor((timeLeft / 1000) % 60);
+            document.getElementById('resetTimer').innerText = `Task di-reset dalam: ${h}j ${m}m ${s}s`;
             if (Date.now() < state.boostEndTime) {
-                const timeLeftBoost = Math.ceil((state.boostEndTime - Date.now()) / 1000);
-                document.getElementById('boostTimer').innerText = `Boost aktif: ${timeLeftBoost}s`;
-            } else {
-                updateUI();
+                document.getElementById('boostTimer').innerText = `Boost aktif: ${Math.ceil((state.boostEndTime - Date.now()) / 1000)}s`;
             }
+            state.lastSeen = Date.now();
             renderWithdrawals();
             saveState();
         }, 1000);
 
+        // ============ INIT ============
         updateUI();
+        setTimeout(checkOfflineEarnings, 2000);
     </script>
 </body>
 </html>
