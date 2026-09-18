@@ -382,3 +382,145 @@
         function switchTab(tabId, element) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElement
+        ById('page-' + tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Update lastSeen saat pindah tab
+            state.lastSeen = Date.now();
+            saveState();
+        }
+
+        // --- AKSI GAME ---
+        function mineCoin() {
+            let isBoosted = Date.now() < state.boostEndTime;
+            let reward = isBoosted ? 20 : 10;
+            state.balance += reward;
+            state.xp += 5;
+            state.lastSeen = Date.now();
+            updateUI();
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function boostMining() {
+            const btn = document.getElementById('boostBtn');
+            btn.disabled = true;
+            btn.innerText = 'Memuat Iklan...';
+
+            AdController.show().then((result) => {
+                if (result.done) {
+                    state.boostEndTime = Date.now() + 60000; // Boost 1 menit
+                    tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert('⚡ Boost Aktif! Dapatkan 2x koin selama 1 menit.');
+                    updateUI();
+                }
+            }).catch((result) => {
+                btn.disabled = false;
+                btn.innerText = '⚡ Boost x2 (Tonton Iklan)';
+                tg.showAlert('Iklan belum selesai ditonton!');
+            });
+        }
+
+        function doTask(taskId) {
+            if (taskId === 'tg') {
+                state.tasksCompleted.tg = true;
+                state.balance += 500;
+                state.xp += 20;
+                tg.showAlert('Terima kasih telah bergabung! +500 Koin.');
+                updateUI();
+            } else if (taskId === 'ads') {
+                if (state.tasksCompleted.adsCount >= MAX_ADS_DAILY) return;
+                
+                AdController.show().then((result) => {
+                    if (result.done) {
+                        state.tasksCompleted.adsCount++;
+                        state.balance += 50;
+                        state.xp += 10;
+                        tg.showAlert('Iklan selesai ditonton! +50 Koin.');
+                        updateUI();
+                    }
+                }).catch((result) => {
+                    tg.showAlert('Iklan belum selesai ditonton!');
+                });
+            }
+        }
+// --- SISTEM WITHDRAW ---
+function requestWithdraw() {
+    const email = document.getElementById('faucetEmail').value;
+    const amount = parseInt(document.getElementById('wdAmount').value);
+
+    if (!email || !email.includes('@')) return tg.showAlert('Masukkan email FaucetPay yang valid!');
+    if (!amount || amount < MIN_WD) return tg.showAlert(`Minimal penarikan adalah ${MIN_WD} Koin!`);
+    if (amount > state.balance) return tg.showAlert('Saldo kamu tidak cukup!');
+
+    state.balance -= amount;
+    const wdId = 'WD' + Date.now();
+    state.withdrawals.unshift({
+        id: wdId, email: email, amount: amount, status: 'Pending', time: Date.now()
+    });
+
+    tg.showAlert(`✅ Permintaan penarikan ${amount} Koin ke ${email} berhasil dikirim! Status: Pending.`);
+    document.getElementById('faucetEmail').value = '';
+    document.getElementById('wdAmount').value = '';
+    updateUI();
+}
+
+function renderWithdrawals() {
+    const container = document.getElementById('wdHistory');
+    if (state.withdrawals.length === 0) {
+        container.innerHTML = 'Belum ada penarikan.';
+        return;
+    }
+    container.innerHTML = '';
+    state.withdrawals.forEach(wd => {
+        if (wd.status === 'Pending' && Date.now() - wd.time > 60000) {
+            wd.status = 'Paid';
+        }
+        const statusClass = wd.status === 'Pending' ? 'status-pending' : 'status-paid';
+        container.innerHTML += `
+            <div class="wd-item">
+                <div>
+                    <div style="font-weight: bold;">${wd.amount} Koin</div>
+                    <div style="font-size: 11px; color: #aaa;">${wd.email}</div>
+                </div>
+                <div class="${statusClass}" style="text-align: right;">
+                    ${wd.status}<br>
+                    <span style="font-size: 10px; color: #666;">${new Date(wd.time).toLocaleTimeString()}</span>
+                </div>
+            </div>
+        `;        // --- SISTEM RESET TASK 24 JAM & TIMER ---
+        setInterval(() => {
+            if (Date.now() - state.lastReset > RESET_INTERVAL) {
+                state.tasksCompleted.tg = false;
+                state.tasksCompleted.adsCount = 0;
+                state.lastReset = Date.now();
+                tg.showAlert('🔄 Tugas harian telah di-reset! Silakan kerjakan lagi.');
+                updateUI();
+            }
+            const timeLeft = RESET_INTERVAL - (Date.now() - state.lastReset);
+            const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+            const seconds = Math.floor((timeLeft / 1000) % 60);
+            document.getElementById('resetTimer').innerText = `Task di-reset dalam: ${hours}j ${minutes}m ${seconds}s`;
+            
+            // Update timer boost setiap detik
+            if (Date.now() < state.boostEndTime) {
+                const timeLeftBoost = Math.ceil((state.boostEndTime - Date.now()) / 1000);
+                document.getElementById('boostTimer').innerText = `Boost aktif: ${timeLeftBoost}s`;
+            } else {
+                updateUI();
+            }
+
+            renderWithdrawals();
+            saveState();
+        }, 1000);
+
+        // Jalankan pertama kali
+        updateUI();
+    </script>
+</body>
+</html>
+    });
+        }
+
+        
