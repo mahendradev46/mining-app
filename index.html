@@ -7,12 +7,33 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://libtl.com/sdk.js" data-zone="11832672" data-sdk="show_11832672"></script>
+    <!-- GigaPub Enhanced Reliability Script (Project ID: 8245) -->
+    <script data-project-id="8245">
+      !function(){
+        var s=document.currentScript,p=s.getAttribute('data-project-id')||'default';
+        var d=['https://ad.gigapub.tech','https://ru-ad.gigapub.tech'],i=0,t,sc;
+        function l(){
+          sc=document.createElement('script');
+          sc.async=true;
+          sc.src=d[i]+'/script?id='+p;
+          clearTimeout(t);
+          t=setTimeout(function(){
+            sc.onload=sc.onerror=null;
+            sc.src='';
+            if(++i<d.length)l();
+          },15000);
+          sc.onload=function(){clearTimeout(t)};
+          sc.onerror=function(){clearTimeout(t);if(++i<d.length)l()};
+          document.head.appendChild(sc);
+        }
+        l();
+      }();
+    </script>
     <style>
         :root {
             --bg: #0a0a0a; --card: #1a1a1a; --gold: #ffd700; --primary: #00e676;
             --purple: #7b2cbf; --blue: #00b4d8; --cyan: #00f5d4;
             --orange: #ff9100; --red: #ff3d3d; --text: #fff; --sub: #888;
-            --green: #00c853;
             --gradient-gold: linear-gradient(135deg, #ffd700, #ff9100);
             --gradient-green: linear-gradient(135deg, #00e676, #00b4d8);
             --gradient-purple: linear-gradient(135deg, #7b2cbf, #00b4d8);
@@ -313,7 +334,6 @@
         { name: "Singularity Engine", gh: 1500, cost: 1500000, icon: "🕳️" }
     ];
 
-    // Cuma 3 provider yang tampil di menu Watch & Earn
     const AD_PROVIDERS = [
         { id: 'adsgram', name: 'Adsgram', reward: 50, limit: 40, icon: '📺', color: '#00b4d8', desc: 'Rewarded Video' },
         { id: 'monetag', name: 'Monetag', reward: 35, limit: 30, icon: '🚀', color: '#7b2cbf', desc: 'Rewarded Ad' },
@@ -337,7 +357,6 @@
     Object.keys(defaults).forEach(k => { if (state[k] === undefined) state[k] = defaults[k]; });
     AD_PROVIDERS.forEach(p => { if (state.adsWatched[p.id] === undefined) state.adsWatched[p.id] = 0; });
 
-    // ==== FUNGSI TOTAL POWER AKUMULATIF ====
     function getTotalMiningPower() {
         let total = 0;
         for (let i = 0; i <= state.rigLevel; i++) total += RIG_TIERS[i].gh;
@@ -346,7 +365,6 @@
     function getHourlyRate() {
         return getTotalMiningPower() * MINING_RATE * 3600;
     }
-    // Sinkronkan miningPower saat load
     state.miningPower = getTotalMiningPower();
 
     function saveState() { localStorage.setItem('miningAppState', JSON.stringify(state)); }
@@ -382,15 +400,20 @@
             } else reject({ done: false });
         });
     }
+
+    // ============ GIGAPUB (SDK TERBARU) ============
     function showGigaPubAd() {
         return new Promise((resolve, reject) => {
             if (typeof window.showGiga === 'function') {
-                window.showGiga("main").then(() => resolve({ done: true, provider: 'GigaPub' })).catch(() => reject({ done: false }));
-            } else reject({ done: false, error: 'SDK not loaded' });
+                window.showGiga()
+                    .then(() => resolve({ done: true, provider: 'GigaPub' }))
+                    .catch((e) => reject({ done: false, provider: 'GigaPub', error: e }));
+            } else {
+                reject({ done: false, provider: 'GigaPub', error: 'SDK not loaded' });
+            }
         });
     }
 
-    // Trigger Monetag otomatis (tanpa reward, cuma impression)
     let tabSwitchCount = 0;
     function triggerMonetagInterstitial() {
         if (typeof show_11832672 === 'function') {
@@ -854,7 +877,7 @@ function switchTab(tabId, element) {
         setTimeout(() => triggerMonetagInterstitial(), 500);
     }
 }
-function boostMining() {
+        function boostMining() {
             const btn = document.getElementById('boostBtn');
             if (btn) { btn.disabled = true; btn.innerText = 'Memuat Iklan...'; }
             showRewardedAd('adsgram').then((result) => {
