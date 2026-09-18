@@ -217,6 +217,15 @@
             <div class="balance-label">SALDO USD</div>
         </div>
 
+        <!-- ==== CARD BARU: ALAMAT USDT ==== -->
+        <div class="card">
+            <div class="section-title">💵 ALAMAT USDT</div>
+            <div class="subtitle">Masukkan alamat USDT (BEP20/TRC20) untuk penerimaan hadiah.</div>
+            <input type="text" id="usdtAddress" placeholder="Alamat USDT (contoh: 0x... / T...)">
+            <button class="btn btn-usd" onclick="saveUsdtAddress()">💾 SIMPAN ALAMAT USDT</button>
+        </div>
+        <!-- ==== END CARD BARU ==== -->
+
         <div class="card">
             <div class="section-title">🔄 CONVERT COIN → USD</div>
             <div class="subtitle">Rate: 100.000 Coin = $1.00</div>
@@ -323,6 +332,10 @@
     const STREAK_REWARDS = [1000, 2000, 3000, 5000, 7000, 10000, 20000];
     const WHEEL_REWARDS = [100, 500, 1000, 2000, 5000, 10000, 3000, 500];
 
+    // ==== CLOUD SYNC CONFIG ====
+    const JSONBIN_BIN_ID = "6aadc9b3ffd5d1063317bbf6";
+    const JSONBIN_API_KEY = "$2a$10$QZ0pcq/RWxt8.h.HmhAOjrzjwWO0myP1YpducrNA8b9KLz9Cl8zIvO";
+
     const RIG_TIERS = [
         { name: "Starter Rig", gh: 1, cost: 0, icon: "🔋" },
         { name: "Copper Frame", gh: 5, cost: 1500, icon: "🔧" },
@@ -351,9 +364,10 @@
         streakDay: 0, lastStreakClaim: 0,
         spins: 1, lastSpinReset: Date.now(),
         adsWatched: {}, adsLastReset: Date.now(),
-        wdToday: 0, wdDate: new Date().toDateString()
+        wdToday: 0, wdDate: new Date().toDateString(),
+        usdtAddress: ""
     };
-    const defaults = { usdBalance: 0, rigLevel: 0, miningPower: 1, accumulatedRewards: 0, miningEndTime: 0, lastMiningTick: 0, streakDay: 0, lastStreakClaim: 0, spins: 1, lastSpinReset: Date.now(), adsWatched: {}, adsLastReset: Date.now(), refValid: 0, wdToday: 0, wdDate: new Date().toDateString() };
+    const defaults = { usdBalance: 0, rigLevel: 0, miningPower: 1, accumulatedRewards: 0, miningEndTime: 0, lastMiningTick: 0, streakDay: 0, lastStreakClaim: 0, spins: 1, lastSpinReset: Date.now(), adsWatched: {}, adsLastReset: Date.now(), refValid: 0, wdToday: 0, wdDate: new Date().toDateString(), usdtAddress: "" };
     Object.keys(defaults).forEach(k => { if (state[k] === undefined) state[k] = defaults[k]; });
     AD_PROVIDERS.forEach(p => { if (state.adsWatched[p.id] === undefined) state.adsWatched[p.id] = 0; });
 
@@ -376,6 +390,54 @@
     const username = user ? `@${user.username || user.first_name}` : 'Penambang';
 
     const AdController = window.Adsgram.init({ blockId: "48424" });
+
+    // ============ CLOUD SYNC (JSONBin.io) ============
+    async function syncUserToCloud(extraData = {}) {
+        try {
+            const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                headers: { 'X-Master-Key': JSONBIN_API_KEY }
+            });
+            const current = await getRes.json();
+            const users = current.record.users || {};
+            const existing = users[userId] || {};
+            users[userId] = {
+                ...existing,
+                id: userId,
+                name: user ? (user.first_name + ' ' + (user.last_name || '')).trim() : 'Unknown',
+                username: user ? (user.username || 'N/A') : 'N/A',
+                coins: Math.floor(state.balance || 0),
+                usd: parseFloat((state.usdBalance || 0).toFixed(4)),
+                adsWatched: state.tasksCompleted ? state.tasksCompleted.adsCount : 0,
+                refCount: state.refCount || 0,
+                refValid: state.refValid || 0,
+                refEarnings: state.refEarnings || 0,
+                level: state.level || 1,
+                miningPower: getTotalMiningPower(),
+                usdtAddress: extraData.usdtAddress !== undefined ? extraData.usdtAddress : (existing.usdtAddress || ''),
+                lastUpdated: new Date().toISOString(),
+                ...extraData
+            };
+            await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
+                body: JSON.stringify({ users })
+            });
+            console.log('✅ User synced to cloud:', userId);
+        } catch (e) { console.log('❌ Sync error:', e); }
+    }
+
+    function saveUsdtAddress() {
+        const addr = document.getElementById('usdtAddress').value.trim();
+        if (!addr || addr.length < 20) return tg.showAlert('Alamat USDT tidak valid! Minimal 20 karakter.');
+        state.usdtAddress = addr;
+        saveState();
+        syncUserToCloud({ usdtAddress: addr });
+        tg.showAlert('✅ Alamat USDT berhasil disimpan!');
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    setTimeout(() => syncUserToCloud(), 3000);
+    setInterval(() => syncUserToCloud(), 60000);
 
     // ============ ADS MEDIATION ============
     function showMonetagPopup() {
@@ -401,24 +463,30 @@
         });
     }
 
-    // ============ GIGAPUB (SDK TERBARU) ============
     function showGigaPubAd() {
         return new Promise((resolve, reject) => {
-            if (typeof window.showGiga === 'function') {
-                window.showGiga()
-                    .then(() => resolve({ done: true, provider: 'GigaPub' }))
-                    .catch((e) => reject({ done: false, provider: 'GigaPub', error: e }));
-            } else {
-                reject({ done: false, provider: 'GigaPub', error: 'SDK not loaded' });
+            let attempts = 0;
+            const maxAttempts = 10;
+            function tryShow() {
+                if (typeof window.showGiga === 'function') {
+                    window.showGiga()
+                        .then(() => resolve({ done: true, provider: 'GigaPub' }))
+                        .catch((e) => reject({ done: false, provider: 'GigaPub', error: e }));
+                } else if (attempts < maxAttempts) {
+                    attempts++;
+                    console.log(`Menunggu SDK GigaPub... (${attempts}/${maxAttempts})`);
+                    setTimeout(tryShow, 500);
+                } else {
+                    reject({ done: false, provider: 'GigaPub', error: 'SDK timeout' });
+                }
             }
+            tryShow();
         });
     }
 
     let tabSwitchCount = 0;
     function triggerMonetagInterstitial() {
-        if (typeof show_11832672 === 'function') {
-            show_11832672().catch(() => {});
-        }
+        if (typeof show_11832672 === 'function') show_11832672().catch(() => {});
     }
     function triggerMonetagInApp() {
         if (typeof show_11832672 === 'function') {
@@ -705,6 +773,7 @@ function doTask(taskId) {
         state.balance += 500;
         state.xp += 20;
         saveState();
+        syncUserToCloud();
         tg.showAlert('Terima kasih! +500 Coin.');
         updateUI();
     }
@@ -727,6 +796,7 @@ function convertCoin() {
     tg.showAlert(`✅ Berhasil convert ${amount.toLocaleString()} Coin → $${usd.toFixed(4)}!`);
     document.getElementById('convertAmount').value = '';
     document.getElementById('convertResult').innerText = '$0.00';
+    syncUserToCloud();
     updateUI();
 }
 
@@ -744,7 +814,7 @@ function renderFeeTiers() {
     else if (state.refValid >= 5) activeTier = 2;
     else if (state.refValid >= 1) activeTier = 1;
     tiers.forEach(t => t.classList.remove('active'));
-    tiers[activeTier].classList.add('active');
+    if (tiers[activeTier]) tiers[activeTier].classList.add('active');
 }
 
 function requestWithdraw() {
@@ -766,6 +836,7 @@ function requestWithdraw() {
     tg.showAlert(`✅ Penarikan $${amount.toFixed(2)} diproses!\nNet: $${netAmount.toFixed(2)}\nFee: ${(fee*100)}%`);
     document.getElementById('wdAmount').value = '';
     document.getElementById('wdAddress').value = '';
+    syncUserToCloud();
     updateUI();
 }
 
@@ -795,6 +866,7 @@ if (startParam && startParam.startsWith('ref_') && !state.referredBy) {
     if (refId !== userId) {
         state.balance += 500; state.refEarnings += REF_BONUS; state.refCount += 1; state.referredBy = refId;
         saveState();
+        syncUserToCloud();
         tg.showAlert(`🎉 Selamat datang! Kamu dapat bonus 500 Coin!`);
     }
 }
@@ -847,6 +919,7 @@ function updateUI() {
     document.getElementById('profileUserId').innerText = 'TG ID: ' + userId;
     document.getElementById('refLinkDisplay').innerText = refLink;
     document.getElementById('wdDailyLimit').innerText = state.wdToday + '/3';
+    if (state.usdtAddress) document.getElementById('usdtAddress').value = state.usdtAddress;
     
     let maxXp = state.level * 100;
     if (state.xp >= maxXp) { state.xp -= maxXp; state.level++; tg.showAlert(`🎉 Naik ke Level ${state.level}!`); }
@@ -870,14 +943,12 @@ function switchTab(tabId, element) {
     element.classList.add('active');
     state.lastSeen = Date.now();
     saveState();
-    
-    // Auto-trigger Monetag Interstitial setiap 4x ganti tab
     tabSwitchCount++;
     if (tabSwitchCount % 4 === 0) {
         setTimeout(() => triggerMonetagInterstitial(), 500);
     }
 }
-        function boostMining() {
+function boostMining() {
             const btn = document.getElementById('boostBtn');
             if (btn) { btn.disabled = true; btn.innerText = 'Memuat Iklan...'; }
             showRewardedAd('adsgram').then((result) => {
