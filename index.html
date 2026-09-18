@@ -298,7 +298,7 @@
     const REF_BONUS = 1000;
     const MINING_RATE = 0.000032;
     const MINING_DURATION = 24 * 60 * 60 * 1000;
-    const COIN_TO_USD = 1 / 100000; // 100.000 coin = $1
+    const COIN_TO_USD = 1 / 100000;
     const STREAK_REWARDS = [1000, 2000, 3000, 5000, 7000, 10000, 20000];
     const WHEEL_REWARDS = [100, 500, 1000, 2000, 5000, 10000, 3000, 500];
 
@@ -313,11 +313,10 @@
         { name: "Singularity Engine", gh: 1500, cost: 1500000, icon: "🕳️" }
     ];
 
+    // Cuma 3 provider yang tampil di menu Watch & Earn
     const AD_PROVIDERS = [
         { id: 'adsgram', name: 'Adsgram', reward: 50, limit: 40, icon: '📺', color: '#00b4d8', desc: 'Rewarded Video' },
-        { id: 'monetag_pop', name: 'Monetag Popup', reward: 30, limit: 20, icon: '🚀', color: '#7b2cbf', desc: 'Rewarded Popup' },
-        { id: 'monetag_int', name: 'Monetag Interstitial', reward: 40, limit: 20, icon: '🎬', color: '#9d4edd', desc: 'Rewarded Interstitial' },
-        { id: 'monetag_inapp', name: 'Monetag In-App', reward: 25, limit: 15, icon: '📱', color: '#5a189a', desc: 'In-App Interstitial' },
+        { id: 'monetag', name: 'Monetag', reward: 35, limit: 30, icon: '🚀', color: '#7b2cbf', desc: 'Rewarded Ad' },
         { id: 'gigapub', name: 'GigaPub', reward: 40, limit: 40, icon: '📦', color: '#ff9100', desc: 'Rewarded Video' }
     ];
 
@@ -338,6 +337,18 @@
     Object.keys(defaults).forEach(k => { if (state[k] === undefined) state[k] = defaults[k]; });
     AD_PROVIDERS.forEach(p => { if (state.adsWatched[p.id] === undefined) state.adsWatched[p.id] = 0; });
 
+    // ==== FUNGSI TOTAL POWER AKUMULATIF ====
+    function getTotalMiningPower() {
+        let total = 0;
+        for (let i = 0; i <= state.rigLevel; i++) total += RIG_TIERS[i].gh;
+        return total;
+    }
+    function getHourlyRate() {
+        return getTotalMiningPower() * MINING_RATE * 3600;
+    }
+    // Sinkronkan miningPower saat load
+    state.miningPower = getTotalMiningPower();
+
     function saveState() { localStorage.setItem('miningAppState', JSON.stringify(state)); }
 
     const tg = window.Telegram.WebApp;
@@ -348,26 +359,27 @@
 
     const AdController = window.Adsgram.init({ blockId: "48424" });
 
+    // ============ ADS MEDIATION ============
     function showMonetagPopup() {
         return new Promise((resolve, reject) => {
             if (typeof show_11832672 === 'function') {
-                show_11832672('pop').then(() => resolve({ done: true, provider: 'Monetag Popup' })).catch(() => reject({ done: false }));
+                show_11832672('pop').then(() => resolve({ done: true, provider: 'Monetag' })).catch(() => reject({ done: false }));
             } else reject({ done: false, error: 'SDK not loaded' });
         });
     }
     function showMonetagInterstitial() {
         return new Promise((resolve, reject) => {
             if (typeof show_11832672 === 'function') {
-                show_11832672().then(() => resolve({ done: true, provider: 'Monetag Interstitial' })).catch(() => reject({ done: false }));
-            } else reject({ done: false, error: 'SDK not loaded' });
+                show_11832672().then(() => resolve({ done: true, provider: 'Monetag' })).catch(() => reject({ done: false }));
+            } else reject({ done: false });
         });
     }
     function showMonetagInApp() {
         return new Promise((resolve, reject) => {
             if (typeof show_11832672 === 'function') {
                 show_11832672({ type: 'inApp', inAppSettings: { frequency: 1, capping: 0.05, interval: 20, timeout: 3, everyPage: false } })
-                .then(() => resolve({ done: true, provider: 'Monetag In-App' })).catch(() => reject({ done: false }));
-            } else reject({ done: false, error: 'SDK not loaded' });
+                .then(() => resolve({ done: true })).catch(() => reject({ done: false }));
+            } else reject({ done: false });
         });
     }
     function showGigaPubAd() {
@@ -378,19 +390,29 @@
         });
     }
 
+    // Trigger Monetag otomatis (tanpa reward, cuma impression)
+    let tabSwitchCount = 0;
+    function triggerMonetagInterstitial() {
+        if (typeof show_11832672 === 'function') {
+            show_11832672().catch(() => {});
+        }
+    }
+    function triggerMonetagInApp() {
+        if (typeof show_11832672 === 'function') {
+            show_11832672({ type: 'inApp', inAppSettings: { frequency: 1, capping: 0.1, interval: 60, timeout: 5, everyPage: false } }).catch(() => {});
+        }
+    }
+
     function showRewardedAd(providerId) {
         const providerMap = {
             'adsgram': () => AdController.show().then(r => r.done ? { done: true, provider: 'Adsgram' } : Promise.reject()),
-            'monetag_pop': () => showMonetagPopup(),
-            'monetag_int': () => showMonetagInterstitial(),
-            'monetag_inapp': () => showMonetagInApp(),
+            'monetag': () => showMonetagPopup(),
             'gigapub': () => showGigaPubAd()
         };
         const waterfall = [
             { id: 'adsgram', show: providerMap['adsgram'] },
             { id: 'gigapub', show: providerMap['gigapub'] },
-            { id: 'monetag_pop', show: providerMap['monetag_pop'] },
-            { id: 'monetag_int', show: providerMap['monetag_int'] }
+            { id: 'monetag', show: providerMap['monetag'] }
         ];
         if (providerId && providerMap[providerId]) {
             const pref = waterfall.find(p => p.id === providerId);
@@ -404,7 +426,7 @@
         }, Promise.reject());
     }
 function calculateReward(seconds) {
-    const rate = state.miningPower * MINING_RATE;
+    const rate = getTotalMiningPower() * MINING_RATE;
     const rand = 0.8 + Math.random() * 0.4;
     return seconds * rate * rand;
 }
@@ -459,7 +481,7 @@ function checkOfflineEarnings() {
     const earned = calculateReward(offlineSec);
     if (offlineSec > 60 && earned > 0.001) {
         document.getElementById('offlineTime').innerText = offlineHours.toFixed(2) + ' jam';
-        document.getElementById('offlineHash').innerText = state.miningPower + ' GH/s';
+        document.getElementById('offlineHash').innerText = getTotalMiningPower() + ' GH/s';
         document.getElementById('offlineEarn').innerText = earned.toFixed(6) + ' Coin';
         document.getElementById('offlineModal').classList.add('show');
         state._pendingOfflineEarn = earned;
@@ -482,6 +504,7 @@ function claimOfflineMining() {
 function renderRigUpgrades() {
     const container = document.getElementById('rigUpgradeList');
     container.innerHTML = '';
+    const totalPower = getTotalMiningPower();
     RIG_TIERS.forEach((rig, i) => {
         const owned = i <= state.rigLevel;
         const canBuy = i === state.rigLevel + 1 && state.balance >= rig.cost;
@@ -493,10 +516,10 @@ function renderRigUpgrades() {
             <div style="font-size: 24px; margin-right: 10px;">${rig.icon}</div>
             <div class="task-info">
                 <div class="task-name">${rig.name} ${owned ? '✅' : ''}</div>
-                <div class="task-reward">⚡ ${rig.gh} GH/s</div>
+                <div class="task-reward">${owned ? '' : '+'}${rig.gh} GH/s ${owned ? '(aktif)' : '(tambahan)'}</div>
             </div>
             <div style="text-align: right;">
-                ${owned ? '<span style="color: var(--primary); font-size: 12px; font-weight:800;">AKTIF</span>' :
+                ${owned ? `<span style="color: var(--primary); font-size: 12px; font-weight:800;">+${rig.gh} GH/s</span>` :
                 `<div style="font-size: 12px; color: var(--orange); font-weight: 700; margin-bottom: 5px;">💰 ${rig.cost.toLocaleString()}</div>
                 <button class="btn" style="width: auto; padding: 6px 12px; margin: 0; font-size: 11px;" onclick="upgradeRig(${i})" ${canBuy ? '' : 'disabled'}>BELI</button>`}
             </div>`;
@@ -510,9 +533,10 @@ function upgradeRig(index) {
     if (state.balance < rig.cost) return tg.showAlert('Saldo tidak cukup!');
     state.balance -= rig.cost;
     state.rigLevel = index;
-    state.miningPower = rig.gh;
+    const newTotal = getTotalMiningPower();
+    state.miningPower = newTotal;
     saveState();
-    tg.showAlert(`🎉 Upgrade ke ${rig.name}! Power: ${rig.gh} GH/s`);
+    tg.showAlert(`🎉 Upgrade ke ${rig.name}!\n+${rig.gh} GH/s\nTotal Power: ${newTotal} GH/s`);
     tg.HapticFeedback.notificationOccurred('success');
     updateUI();
 }
@@ -663,7 +687,6 @@ function doTask(taskId) {
     }
 }
 
-// ============ CONVERT COIN → USD ============
 function updateConvertPreview() {
     const amount = parseInt(document.getElementById('convertAmount').value) || 0;
     const usd = amount * COIN_TO_USD;
@@ -684,7 +707,6 @@ function convertCoin() {
     updateUI();
 }
 
-// ============ WITHDRAW USD ============
 function getWdFee() {
     if (state.refValid >= 10) return 0.10;
     if (state.refValid >= 5) return 0.20;
@@ -708,26 +730,15 @@ function requestWithdraw() {
     if (!amount || amount < MIN_WD_USD) return tg.showAlert(`Minimal penarikan $${MIN_WD_USD.toFixed(2)}!`);
     if (amount > (state.usdBalance || 0)) return tg.showAlert('Saldo USD tidak cukup!');
     if (!addr || addr.length < 10) return tg.showAlert('Masukkan Wallet Address yang valid!');
-    
     const today = new Date().toDateString();
     if (state.wdDate !== today) { state.wdToday = 0; state.wdDate = today; }
     if (state.wdToday >= 3) return tg.showAlert('Limit penarikan harian (3x) sudah tercapai!');
-    
     const fee = getWdFee();
     const feeAmount = amount * fee;
     const netAmount = amount - feeAmount;
-    
     state.usdBalance -= amount;
     state.wdToday++;
-    state.withdrawals.unshift({
-        id: 'WD' + Date.now(),
-        amount: amount,
-        fee: feeAmount,
-        netAmount: netAmount,
-        address: addr,
-        status: 'Pending',
-        time: Date.now()
-    });
+    state.withdrawals.unshift({ id: 'WD' + Date.now(), amount, fee: feeAmount, netAmount, address: addr, status: 'Pending', time: Date.now() });
     saveState();
     tg.showAlert(`✅ Penarikan $${amount.toFixed(2)} diproses!\nNet: $${netAmount.toFixed(2)}\nFee: ${(fee*100)}%`);
     document.getElementById('wdAmount').value = '';
@@ -753,7 +764,6 @@ function renderWithdrawals() {
     });
 }
 
-// ============ REFERRAL ============
 const BOT_LINK = "https://t.me/Free_MiningCrypto_bot";
 const refLink = `${BOT_LINK}?start=ref_${userId}`;
 const startParam = new URLSearchParams(window.location.search).get('start') || tg.initDataUnsafe?.start_param;
@@ -774,12 +784,12 @@ function shareRefLink() {
     tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(t)}`);
 }
 
-// ============ UI UPDATE ============
 function updateMiningUI() {
     const active = isMiningActive();
     const btn = document.getElementById('btnMining');
     const timer = document.getElementById('miningTimer');
     const orb = document.getElementById('rigOrb');
+    const totalPower = getTotalMiningPower();
     if (active) {
         btn.innerText = '⏹️ HENTIKAN MINING';
         timer.style.display = 'block';
@@ -794,9 +804,9 @@ function updateMiningUI() {
     }
     document.getElementById('rigName').innerText = `${RIG_TIERS[state.rigLevel].name} - Lv. ${state.rigLevel + 1}`;
     document.getElementById('rigIcon').innerText = RIG_TIERS[state.rigLevel].icon;
-    document.getElementById('rigPower').innerText = `${state.miningPower} GH/s`;
-    document.getElementById('totalPower').innerText = `${state.miningPower} GH/s`;
-    document.getElementById('hourlyRate').innerText = (state.miningPower * MINING_RATE * 3600).toFixed(4);
+    document.getElementById('rigPower').innerText = `${totalPower} GH/s`;
+    document.getElementById('totalPower').innerText = `${totalPower} GH/s`;
+    document.getElementById('hourlyRate').innerText = getHourlyRate().toFixed(4);
     document.getElementById('accumulatedRewards').innerText = state.accumulatedRewards.toFixed(8);
 }
 
@@ -837,8 +847,14 @@ function switchTab(tabId, element) {
     element.classList.add('active');
     state.lastSeen = Date.now();
     saveState();
+    
+    // Auto-trigger Monetag Interstitial setiap 4x ganti tab
+    tabSwitchCount++;
+    if (tabSwitchCount % 4 === 0) {
+        setTimeout(() => triggerMonetagInterstitial(), 500);
+    }
 }
-        function boostMining() {
+function boostMining() {
             const btn = document.getElementById('boostBtn');
             if (btn) { btn.disabled = true; btn.innerText = 'Memuat Iklan...'; }
             showRewardedAd('adsgram').then((result) => {
