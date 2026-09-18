@@ -12,65 +12,41 @@
             --blue: #00b4d8; --orange: #ff9100; --text: #ffffff; --sub: #8d8daa; 
             --nav-bg: #151529; --gradient: linear-gradient(135deg, #7b2cbf, #00b4d8);
         }
-        body { 
-            font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); 
-            margin: 0; padding: 0; padding-bottom: 80px; display: flex; flex-direction: column; align-items: center;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 80px; display: flex; flex-direction: column; align-items: center; }
         .page { display: none; width: 100%; max-width: 420px; padding: 15px; box-sizing: border-box; animation: fadeIn 0.3s; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Kartu Gradien ala TASKY */
         .card { background: linear-gradient(145deg, #1a1a30, #151529); border: 1px solid #2a2a45; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
         .card-glow { background: linear-gradient(135deg, #2a1a4a, #1a2a4a); border: 1px solid #7b2cbf; }
-        
         .title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #fff; }
         .subtitle { font-size: 12px; color: var(--sub); margin-bottom: 15px; }
-        
         .coin { font-size: 55px; margin: 10px 0; text-align: center; filter: drop-shadow(0 0 15px rgba(123, 44, 191, 0.6)); }
         .balance { font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 5px; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* XP Bar */
         .xp-container { width: 100%; background: #2a2a45; border-radius: 10px; height: 22px; position: relative; overflow: hidden; margin-bottom: 15px; }
         .xp-bar { height: 100%; background: var(--gradient); width: 0%; transition: width 0.5s; }
         .xp-text { position: absolute; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: #fff; top: 3px; text-shadow: 0 1px 2px #000; }
-        
-        /* Tombol */
         .btn { background: var(--gradient); color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4); }
         .btn:active { transform: scale(0.97); }
         .btn-boost { background: linear-gradient(135deg, #ff9100, #ff5400); box-shadow: 0 4px 15px rgba(255, 145, 0, 0.4); }
         .btn-boost:disabled { background: #2a2a45; color: #555; box-shadow: none; }
         .btn-outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); box-shadow: none; }
-        
-        /* Task Item */
         .task-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #2a2a45; }
         .task-item:last-child { border-bottom: none; }
         .task-info { display: flex; flex-direction: column; }
         .task-name { font-weight: bold; font-size: 14px; }
         .task-reward { font-size: 12px; color: var(--primary); }
         .task-status { font-size: 12px; color: var(--sub); margin-top: 4px; }
-        
-        /* Progress Bar untuk Task */
         .progress-bar { width: 100%; background: #2a2a45; border-radius: 5px; height: 8px; margin-top: 5px; }
         .progress-fill { height: 100%; background: var(--blue); border-radius: 5px; width: 0%; }
-        
-        /* Bottom Nav */
         .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2a2a45; z-index: 100; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub); cursor: pointer; font-size: 10px; flex: 1; }
         .nav-item.active { color: var(--blue); }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
-        
-        /* Input Form */
         input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #2a2a45; background: #0b0b14; color: white; box-sizing: border-box; margin-bottom: 12px; }
-        
-        /* Histori WD */
         .wd-item { background: #1a1a30; padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; border: 1px solid #2a2a45; }
         .status-pending { color: #ffc107; font-weight: bold; }
         .status-paid { color: var(--primary); font-weight: bold; }
-        
         .ref-box { background: #0b0b14; border: 1px dashed var(--blue); padding: 12px; border-radius: 12px; word-break: break-all; font-size: 12px; margin-bottom: 12px; color: #ccc; }
-        
-        /* Timer Box */
         .timer-box { text-align: center; font-size: 14px; color: var(--orange); font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
@@ -93,7 +69,7 @@
         </div>
     </div>
 
-    <!-- PAGE: MINE (PASSIVE YIELD) -->
+    <!-- PAGE: MINE -->
     <div id="page-mine" class="page">
         <div class="card">
             <div class="title">⚙️ Rig Mining Otomatis</div>
@@ -104,7 +80,6 @@
                 <div style="font-size: 12px; color: var(--sub);">Koin Terkumpul (Offline)</div>
             </div>
             <button class="btn" onclick="collectOfflineYield()">Klaim Hasil Mining</button>
-            <div class="subtitle" style="text-align: center; margin-top: 10px;">Hasil dihitung berdasarkan waktu aplikasi ditutup.</div>
         </div>
     </div>
 
@@ -113,7 +88,6 @@
         <div class="card">
             <div class="title">📋 Misi Harian</div>
             <div class="subtitle">Reset otomatis setiap 24 jam.</div>
-            
             <div class="task-item">
                 <div class="task-info">
                     <span class="task-name">Join Grup Telegram</span>
@@ -121,21 +95,17 @@
                 </div>
                 <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin: 0;" id="btn-task-tg" onclick="doTask('tg')">Klaim</button>
             </div>
-            
             <div class="task-item">
                 <div class="task-info" style="width: 100%;">
                     <div style="display: flex; justify-content: space-between;">
                         <span class="task-name">Tonton Iklan (20x)</span>
                         <span class="task-reward">+1000 Koin</span>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="adsProgressBar" style="width: 0%;"></div>
-                    </div>
+                    <div class="progress-bar"><div class="progress-fill" id="adsProgressBar" style="width: 0%;"></div></div>
                     <span class="task-status" id="adsProgressText">0/20 Selesai</span>
                 </div>
                 <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin: 0; margin-left: 10px;" id="btn-task-ads" onclick="doTask('ads')">Tonton</button>
             </div>
-            
             <div class="task-status" id="resetTimer" style="margin-top: 15px; text-align: center;">Task di-reset dalam: --:--:--</div>
         </div>
     </div>
@@ -145,11 +115,7 @@
         <div class="card">
             <div class="title">💳 Dompet & Withdraw</div>
             <div style="font-size: 14px; margin-bottom: 15px;">Saldo: <span id="walletBalance" style="color: var(--primary); font-weight: bold;">0</span> Koin</div>
-            
-            <div id="wdRequirement" class="subtitle" style="color: #ffc107; font-weight: bold; margin-bottom: 10px;">
-                ⚠️ Selesaikan 20 tontonan iklan hari ini untuk mengaktifkan WD.
-            </div>
-
+            <div id="wdRequirement" class="subtitle" style="color: #ffc107; font-weight: bold; margin-bottom: 10px;">⚠️ Selesaikan 20 tontonan iklan hari ini untuk mengaktifkan WD.</div>
             <input type="email" id="faucetEmail" placeholder="Masukkan Email FaucetPay">
             <input type="number" id="wdAmount" placeholder="Jumlah Koin (Min. 5000)">
             <button class="btn" id="btnWd" onclick="requestWithdraw()" disabled>Tarik ke FaucetPay</button>
@@ -164,9 +130,7 @@
     <div id="page-referral" class="page">
         <div class="card card-glow">
             <div class="title">👥 Undang Teman</div>
-            <div class="subtitle" style="text-align: center;">
-                Ajak temanmu dan dapatkan <b>+1000 Koin</b> per teman!
-            </div>
+            <div class="subtitle" style="text-align: center;">Ajak temanmu dan dapatkan <b>+1000 Koin</b> per teman!</div>
             <div class="ref-box" id="refLinkDisplay">Memuat link...</div>
             <button class="btn" onclick="copyRefLink()">📋 Salin Link Referral</button>
             <button class="btn btn-outline" onclick="shareRefLink()">📤 Bagikan ke Teman</button>
@@ -196,202 +160,171 @@
 
     <!-- BOTTOM NAVIGATION -->
     <div class="nav-bar">
-        <div class="nav-item active" onclick="switchTab('home', this)">
-            <div class="nav-icon">⛏️</div><div>Home</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('mine', this)">
-            <div class="nav-icon">⚙️</div><div>Mine</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('tasks', this)">
-            <div class="nav-icon">📋</div><div>Tasks</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('wallet', this)">
-            <div class="nav-icon">💳</div><div>Wallet</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('referral', this)">
-            <div class="nav-icon">👥</div><div>Referral</div>
-        </div>
-        <div class="nav-item" onclick="switchTab('profile', this)">
-            <div class="nav-icon">👤</div><div>Profil</div>
-        </div>
-    </div>
-
+        <div class="nav-item active" onclick="switchTab('home', this)"><div class="nav-icon">⛏️</div><div>Home</div></div>
+        <div class="nav-item" onclick="switchTab('mine', this)"><div class="nav-icon">⚙️</div><div>Mine</div></div>
+        <div class="nav-item" onclick="switchTab('tasks', this)"><div class="nav-icon">📋</div><div>Tasks</div></div>
+        <div class="nav-item" onclick="switchTab('wallet', this)"><div class="nav-icon">💳</div><div>Wallet</div></div>
+        <div class="nav-item" onclick="switchTab('referral', this)"><div class="nav-icon">👥</div><div>Referral</div></div>
+        <div class="nav-item" onclick="switchTab('profile', this)"><div class="nav-icon">👤</div><div>Profil</div></div>
+                                                                                      </div>
     <script>
-        // --- KONFIGURASI GAME ---
-        const MIN_WD = 5000;
-        const MAX_ADS_DAILY = 20;
-        const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 Jam
-        const REF_BONUS = 1000;
-        const OFFLINE_RATE = 50; // 50 koin per jam offline
+    // --- KONFIGURASI GAME ---
+    const MIN_WD = 5000;
+    const MAX_ADS_DAILY = 20;
+    const RESET_INTERVAL = 24 * 60 * 60 * 1000; 
+    const REF_BONUS = 1000;
+    const OFFLINE_RATE = 50; 
 
-        // --- STATE & LOCAL STORAGE ---
-        let state = JSON.parse(localStorage.getItem('miningAppState')) || {
-            balance: 0, xp: 0, level: 1,
-            tasksCompleted: { tg: false, adsCount: 0 },
-            lastReset: Date.now(),
-            withdrawals: [],
-            boostEndTime: 0,
-            refCount: 0,
-            refEarnings: 0,
-            referredBy: null,
-            lastSeen: Date.now() // Untuk fitur offline mining
-        };
+    let state = JSON.parse(localStorage.getItem('miningAppState')) || {
+        balance: 0, xp: 0, level: 1,
+        tasksCompleted: { tg: false, adsCount: 0 },
+        lastReset: Date.now(),
+        withdrawals: [],
+        boostEndTime: 0,
+        refCount: 0,
+        refEarnings: 0,
+        referredBy: null,
+        lastSeen: Date.now() 
+    };
 
-        function saveState() { localStorage.setItem('miningAppState', JSON.stringify(state)); }
+    function saveState() { localStorage.setItem('miningAppState', JSON.stringify(state)); }
 
-        // --- INISIALISASI UI & USER ---
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        const user = tg.initDataUnsafe?.user;
-        const userId = user ? user.id : 'unknown';
-        const username = user ? `@${user.username || user.first_name}` : 'Penambang Anonim';
-        
-        document.getElementById('userDisplay').innerText = `Halo, ${username}`;
-        document.getElementById('profileUsername').innerText = username;
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    const user = tg.initDataUnsafe?.user;
+    const userId = user ? user.id : 'unknown';
+    const username = user ? `@${user.username || user.first_name}` : 'Penambang Anonim';
+    
+    document.getElementById('userDisplay').innerText = `Halo, ${username}`;
+    document.getElementById('profileUsername').innerText = username;
 
-        // --- INISIALISASI ADSGRAM ---
-        const AdController = window.Adsgram.init({ blockId: "48424" });
+    const AdController = window.Adsgram.init({ blockId: "48424" });
 
-        // --- SISTEM REFERRAL ---
-        const BOT_LINK = "https://t.me/Free_MiningCrypto_bot";
-        const refLink = `${BOT_LINK}?start=ref_${userId}`;
-        document.getElementById('refLinkDisplay').innerText = refLink;
+    const BOT_LINK = "https://t.me/Free_MiningCrypto_bot";
+    const refLink = `${BOT_LINK}?start=ref_${userId}`;
+    document.getElementById('refLinkDisplay').innerText = refLink;
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const startParam = urlParams.get('start') || tg.initDataUnsafe?.start_param;
-        
-        if (startParam && startParam.startsWith('ref_') && !state.referredBy) {
-            const referrerId = startParam.replace('ref_', '');
-            if (referrerId !== userId) {
-                state.balance += 500;
-                state.refEarnings += REF_BONUS;
-                state.refCount += 1;
-                state.referredBy = referrerId;
-                saveState();
-                tg.showAlert(`🎉 Selamat datang! Kamu bergabung melalui link referral dan mendapat bonus 500 Koin!`);
-            }
-        }
-
-        function copyRefLink() {
-            navigator.clipboard.writeText(refLink).then(() => {
-                tg.showAlert('✅ Link referral berhasil disalin! Bagikan ke temanmu.');
-                tg.HapticFeedback.notificationOccurred('success');
-            }).catch(() => {
-                tg.showAlert('Gagal menyalin. Silakan salin manual: ' + refLink);
-            });
-        }
-
-        function shareRefLink() {
-            const shareText = `Ayo tambang koin crypto gratis di Free Mining Crypto! Klik link ini untuk mulai: ${refLink}`;
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
-        }
-
-        // --- FITUR OFFLINE MINING (PASSIVE YIELD) ---
-        function calculateOfflineYield() {
-            const now = Date.now();
-            const timeDiff = now - state.lastSeen; // dalam milidetik
-            const hoursOffline = timeDiff / (1000 * 60 * 60);
-            const yieldAmount = Math.floor(hoursOffline * OFFLINE_RATE);
-            
-            if (yieldAmount > 0) {
-                document.getElementById('offlineYield').innerText = yieldAmount.toLocaleString();
-            } else {
-                document.getElementById('offlineYield').innerText = "0";
-            }
-            return yieldAmount;
-        }
-
-        function collectOfflineYield() {
-            const yieldAmount = calculateOfflineYield();
-            if (yieldAmount > 0) {
-                state.balance += yieldAmount;
-                state.lastSeen = Date.now();
-                saveState();
-                tg.showAlert(`✅ Berhasil mengklaim ${yieldAmount} Koin dari mining offline!`);
-                updateUI();
-            } else {
-                tg.showAlert('Belum ada hasil mining yang bisa diklaim.');
-            }
-        }
-
-        // --- UPDATE UI ---
-        function updateUI() {
-            // Cek Boost & Timer
-            let isBoosted = Date.now() < state.boostEndTime;
-            const boostBtn = document.getElementById('boostBtn');
-            const boostTimer = document.getElementById('boostTimer');
-            
-            if(isBoosted) {
-                boostBtn.disabled = true;
-                boostBtn.innerText = 'Boost Sedang Berjalan...';
-                boostTimer.style.display = 'block';
-                const timeLeft = Math.ceil((state.boostEndTime - Date.now()) / 1000);
-                boostTimer.innerText = `Boost aktif: ${timeLeft}s`;
-            } else {
-                boostBtn.disabled = false;
-                boostBtn.innerText = '⚡ Boost x2 (Tonton Iklan)';
-                boostTimer.style.display = 'none';
-            }
-
-            // Update Koin & Level
-            document.getElementById('balanceDisplay').innerText = state.balance.toLocaleString() + ' Koin';
-            document.getElementById('walletBalance').innerText = state.balance.toLocaleString();
-            document.getElementById('profileBalance').innerText = state.balance.toLocaleString();
-            document.getElementById('profileLevel').innerText = state.level;
-            document.getElementById('refCount').innerText = state.refCount + ' Orang';
-            document.getElementById('refEarnings').innerText = state.refEarnings.toLocaleString() + ' Koin';
-            
-            let maxXp = state.level * 100;
-            if (state.xp >= maxXp) {
-                state.xp -= maxXp;
-                state.level++;
-                tg.showAlert(`🎉 Selamat! Kamu naik ke Level ${state.level}!`);
-            }
-            document.getElementById('xpBar').style.width = (state.xp / maxXp * 100) + '%';
-            document.getElementById('xpText').innerText = `Lv. ${state.level} (${state.xp}/${maxXp} XP)`;
-
-            // Update Tasks Progress
-            document.getElementById('btn-task-tg').innerText = state.tasksCompleted.tg ? 'Selesai' : 'Klaim';
-            document.getElementById('btn-task-tg').disabled = state.tasksCompleted.tg;
-            
-            const adsCount = state.tasksCompleted.adsCount;
-            const adsPercent = (adsCount / MAX_ADS_DAILY) * 100;
-            document.getElementById('adsProgressBar').style.width = adsPercent + '%';
-            document.getElementById('adsProgressText').innerText = `${adsCount}/${MAX_ADS_DAILY} Selesai`;
-            document.getElementById('btn-task-ads').disabled = adsCount >= MAX_ADS_DAILY;
-
-            // Update Syarat WD
-            const wdBtn = document.getElementById('btnWd');
-            const wdReq = document.getElementById('wdRequirement');
-            if (adsCount >= MAX_ADS_DAILY) {
-                wdBtn.disabled = false;
-                wdReq.style.display = 'none';
-            } else {
-                wdBtn.disabled = true;
-                wdReq.style.display = 'block';
-            }
-
-            // Update Offline Yield
-            calculateOfflineYield();
-
-            renderWithdrawals();
+    const urlParams = new URLSearchParams(window.location.search);
+    const startParam = urlParams.get('start') || tg.initDataUnsafe?.start_param;
+    
+    if (startParam && startParam.startsWith('ref_') && !state.referredBy) {
+        const referrerId = startParam.replace('ref_', '');
+        if (referrerId !== userId) {
+            state.balance += 500;
+            state.refEarnings += REF_BONUS;
+            state.refCount += 1;
+            state.referredBy = referrerId;
             saveState();
+            tg.showAlert(`🎉 Selamat datang! Kamu bergabung melalui link referral dan mendapat bonus 500 Koin!`);
+        }
+    }
+
+    function copyRefLink() {
+        navigator.clipboard.writeText(refLink).then(() => {
+            tg.showAlert('✅ Link referral berhasil disalin!');
+            tg.HapticFeedback.notificationOccurred('success');
+        }).catch(() => {
+            tg.showAlert('Gagal menyalin. Silakan salin manual: ' + refLink);
+        });
+    }
+
+    function shareRefLink() {
+        const shareText = `Ayo tambang koin crypto gratis! Klik link ini: ${refLink}`;
+        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`);
+    }
+
+    function calculateOfflineYield() {
+        const now = Date.now();
+        const timeDiff = now - state.lastSeen;
+        const hoursOffline = timeDiff / (1000 * 60 * 60);
+        const yieldAmount = Math.floor(hoursOffline * OFFLINE_RATE);
+        
+        if (yieldAmount > 0) {
+            document.getElementById('offlineYield').innerText = yieldAmount.toLocaleString();
+        } else {
+            document.getElementById('offlineYield').innerText = "0";
+        }
+        return yieldAmount;
+    }
+
+    function collectOfflineYield() {
+        const yieldAmount = calculateOfflineYield();
+        if (yieldAmount > 0) {
+            state.balance += yieldAmount;
+            state.lastSeen = Date.now();
+            saveState();
+            tg.showAlert(`✅ Berhasil mengklaim ${yieldAmount} Koin!`);
+            updateUI();
+        } else {
+            tg.showAlert('Belum ada hasil mining yang bisa diklaim.');
+        }
+    }
+
+    function updateUI() {
+        let isBoosted = Date.now() < state.boostEndTime;
+        const boostBtn = document.getElementById('boostBtn');
+        const boostTimer = document.getElementById('boostTimer');
+        
+        if(isBoosted) {
+            boostBtn.disabled = true;
+            boostBtn.innerText = 'Boost Sedang Berjalan...';
+            boostTimer.style.display = 'block';
+            const timeLeft = Math.ceil((state.boostEndTime - Date.now()) / 1000);
+            boostTimer.innerText = `Boost aktif: ${timeLeft}s`;
+        } else {
+            boostBtn.disabled = false;
+            boostBtn.innerText = '⚡ Boost x2 (Tonton Iklan)';
+            boostTimer.style.display = 'none';
         }
 
-        // --- NAVIGASI TAB ---
-        function switchTab(tabId, element) {
+        document.getElementById('balanceDisplay').innerText = state.balance.toLocaleString() + ' Koin';
+        document.getElementById('walletBalance').innerText = state.balance.toLocaleString();
+        document.getElementById('profileBalance').innerText = state.balance.toLocaleString();
+        document.getElementById('profileLevel').innerText = state.level;
+        document.getElementById('refCount').innerText = state.refCount + ' Orang';
+        document.getElementById('refEarnings').innerText = state.refEarnings.toLocaleString() + ' Koin';
+        
+        let maxXp = state.level * 100;
+        if (state.xp >= maxXp) {
+            state.xp -= maxXp;
+            state.level++;
+            tg.showAlert(`🎉 Selamat! Kamu naik ke Level ${state.level}!`);
+        }
+        document.getElementById('xpBar').style.width = (state.xp / maxXp * 100) + '%';
+        document.getElementById('xpText').innerText = `Lv. ${state.level} (${state.xp}/${maxXp} XP)`;
+
+        document.getElementById('btn-task-tg').innerText = state.tasksCompleted.tg ? 'Selesai' : 'Klaim';
+        document.getElementById('btn-task-tg').disabled = state.tasksCompleted.tg;
+        
+        const adsCount = state.tasksCompleted.adsCount;
+        const adsPercent = (adsCount / MAX_ADS_DAILY) * 100;
+        document.getElementById('adsProgressBar').style.width = adsPercent + '%';
+        document.getElementById('adsProgressText').innerText = `${adsCount}/${MAX_ADS_DAILY} Selesai`;
+        document.getElementById('btn-task-ads').disabled = adsCount >= MAX_ADS_DAILY;
+
+        const wdBtn = document.getElementById('btnWd');
+        const wdReq = document.getElementById('wdRequirement');
+        if (adsCount >= MAX_ADS_DAILY) {
+            wdBtn.disabled = false;
+            wdReq.style.display = 'none';
+        } else {
+            wdBtn.disabled = true;
+            wdReq.style.display = 'block';
+        }
+
+        calculateOfflineYield();
+        renderWithdrawals();
+        saveState();
+    }
+            function switchTab(tabId, element) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElement
-        ById('page-' + tabId).classList.add('active');
+            document.getElementById('page-' + tabId).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             element.classList.add('active');
-            
-            // Update lastSeen saat pindah tab
             state.lastSeen = Date.now();
             saveState();
         }
 
-        // --- AKSI GAME ---
         function mineCoin() {
             let isBoosted = Date.now() < state.boostEndTime;
             let reward = isBoosted ? 20 : 10;
@@ -409,9 +342,9 @@
 
             AdController.show().then((result) => {
                 if (result.done) {
-                    state.boostEndTime = Date.now() + 60000; // Boost 1 menit
+                    state.boostEndTime = Date.now() + 60000; 
                     tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert('⚡ Boost Aktif! Dapatkan 2x koin selama 1 menit.');
+                    tg.showAlert('⚡ Boost Aktif! 2x koin selama 1 menit.');
                     updateUI();
                 }
             }).catch((result) => {
@@ -436,7 +369,7 @@
                         state.tasksCompleted.adsCount++;
                         state.balance += 50;
                         state.xp += 10;
-                        tg.showAlert('Iklan selesai ditonton! +50 Koin.');
+                        tg.showAlert('Iklan selesai! +50 Koin.');
                         updateUI();
                     }
                 }).catch((result) => {
@@ -444,57 +377,58 @@
                 });
             }
         }
-// --- SISTEM WITHDRAW ---
-function requestWithdraw() {
-    const email = document.getElementById('faucetEmail').value;
-    const amount = parseInt(document.getElementById('wdAmount').value);
 
-    if (!email || !email.includes('@')) return tg.showAlert('Masukkan email FaucetPay yang valid!');
-    if (!amount || amount < MIN_WD) return tg.showAlert(`Minimal penarikan adalah ${MIN_WD} Koin!`);
-    if (amount > state.balance) return tg.showAlert('Saldo kamu tidak cukup!');
+        function requestWithdraw() {
+            const email = document.getElementById('faucetEmail').value;
+            const amount = parseInt(document.getElementById('wdAmount').value);
 
-    state.balance -= amount;
-    const wdId = 'WD' + Date.now();
-    state.withdrawals.unshift({
-        id: wdId, email: email, amount: amount, status: 'Pending', time: Date.now()
-    });
+            if (!email || !email.includes('@')) return tg.showAlert('Masukkan email FaucetPay yang valid!');
+            if (!amount || amount < MIN_WD) return tg.showAlert(`Minimal penarikan adalah ${MIN_WD} Koin!`);
+            if (amount > state.balance) return tg.showAlert('Saldo kamu tidak cukup!');
 
-    tg.showAlert(`✅ Permintaan penarikan ${amount} Koin ke ${email} berhasil dikirim! Status: Pending.`);
-    document.getElementById('faucetEmail').value = '';
-    document.getElementById('wdAmount').value = '';
-    updateUI();
-}
+            state.balance -= amount;
+            const wdId = 'WD' + Date.now();
+            state.withdrawals.unshift({ id: wdId, email: email, amount: amount, status: 'Pending', time: Date.now() });
 
-function renderWithdrawals() {
-    const container = document.getElementById('wdHistory');
-    if (state.withdrawals.length === 0) {
-        container.innerHTML = 'Belum ada penarikan.';
-        return;
-    }
-    container.innerHTML = '';
-    state.withdrawals.forEach(wd => {
-        if (wd.status === 'Pending' && Date.now() - wd.time > 60000) {
-            wd.status = 'Paid';
+            tg.showAlert(`✅ Penarikan ${amount} Koin ke ${email} berhasil! Status: Pending.`);
+            document.getElementById('faucetEmail').value = '';
+            document.getElementById('wdAmount').value = '';
+            updateUI();
         }
-        const statusClass = wd.status === 'Pending' ? 'status-pending' : 'status-paid';
-        container.innerHTML += `
-            <div class="wd-item">
-                <div>
-                    <div style="font-weight: bold;">${wd.amount} Koin</div>
-                    <div style="font-size: 11px; color: #aaa;">${wd.email}</div>
-                </div>
-                <div class="${statusClass}" style="text-align: right;">
-                    ${wd.status}<br>
-                    <span style="font-size: 10px; color: #666;">${new Date(wd.time).toLocaleTimeString()}</span>
-                </div>
-            </div>
-        `;        // --- SISTEM RESET TASK 24 JAM & TIMER ---
+
+        function renderWithdrawals() {
+            const container = document.getElementById('wdHistory');
+            if (state.withdrawals.length === 0) {
+                container.innerHTML = 'Belum ada penarikan.';
+                return;
+            }
+            container.innerHTML = '';
+            state.withdrawals.forEach(wd => {
+                if (wd.status === 'Pending' && Date.now() - wd.time > 60000) {
+                    wd.status = 'Paid';
+                }
+                const statusClass = wd.status === 'Pending' ? 'status-pending' : 'status-paid';
+                container.innerHTML += `
+                    <div class="wd-item">
+                        <div>
+                            <div style="font-weight: bold;">${wd.amount} Koin</div>
+                            <div style="font-size: 11px; color: #aaa;">${wd.email}</div>
+                        </div>
+                        <div class="${statusClass}" style="text-align: right;">
+                            ${wd.status}<br>
+                            <span style="font-size: 10px; color: #666;">${new Date(wd.time).toLocaleTimeString()}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
         setInterval(() => {
             if (Date.now() - state.lastReset > RESET_INTERVAL) {
                 state.tasksCompleted.tg = false;
                 state.tasksCompleted.adsCount = 0;
                 state.lastReset = Date.now();
-                tg.showAlert('🔄 Tugas harian telah di-reset! Silakan kerjakan lagi.');
+                tg.showAlert('🔄 Tugas harian telah di-reset!');
                 updateUI();
             }
             const timeLeft = RESET_INTERVAL - (Date.now() - state.lastReset);
@@ -503,24 +437,17 @@ function renderWithdrawals() {
             const seconds = Math.floor((timeLeft / 1000) % 60);
             document.getElementById('resetTimer').innerText = `Task di-reset dalam: ${hours}j ${minutes}m ${seconds}s`;
             
-            // Update timer boost setiap detik
             if (Date.now() < state.boostEndTime) {
                 const timeLeftBoost = Math.ceil((state.boostEndTime - Date.now()) / 1000);
                 document.getElementById('boostTimer').innerText = `Boost aktif: ${timeLeftBoost}s`;
             } else {
                 updateUI();
             }
-
             renderWithdrawals();
             saveState();
         }, 1000);
 
-        // Jalankan pertama kali
         updateUI();
     </script>
 </body>
 </html>
-    });
-        }
-
-        
